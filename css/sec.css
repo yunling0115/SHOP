@@ -1,0 +1,71 @@
+/* css file for SEC Filings */
+body {
+	background: cornsilk;
+	font-family: "Times New Roman", Times, serif;
+	color: #000;
+	margin-left: 3em;
+	margin-right: 3em;
+}
+h1 {
+	text-align: center;
+}
+h2 {
+	color: black;
+	text-decoration: underline;
+}
+table tr td input[type=text] {
+	width: 12em;
+}
+table tr td input[type=radio] {
+	width: 2em;
+}
+table tr td select {
+	width: 8em;
+}
+input[type=checkbox], input[type=radio] {
+	width: 2em;
+}
+a:link {
+	text-decoration: none;
+	color: black;
+}
+a:hover, a:active {
+	text-decoration: none;
+	color: blue;
+}
+#login_form {
+	width: 300px;
+	background: gold;
+	margin: 40px auto 0;
+	padding: 1em;
+	-moz-border-radius: 3px;
+}
+#create_form {
+	width: 300px;
+	background: gold;
+	margin: 40px auto 0;
+	padding: 1em;
+	-moz-border-radius: 3px;
+}
+input[class=log_in] {
+	border: none;
+	margin-right: 1em;
+	padding: 6px;
+	text-decoration: none;
+	font-size: 12px;
+	-moz-border-radius: 4px;
+	background: #348075;
+	color: white;
+	text-align: center
+}
+input[class=log_out] {
+	border: none;
+	margin-right: 1em;
+	padding: 6px;
+	text-decoration: none;
+	font-size: 12px;
+	-moz-border-radius: 4px;
+	background: #348075;
+	color: white;
+	text-align: center
+}

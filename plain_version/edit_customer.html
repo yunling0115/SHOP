@@ -1,0 +1,660 @@
+<?php
+	$con = mysql_connect('localhost','root','0418162');
+	if (!$con) {
+		die("Cannot establish a connection");
+	}
+	$db_selected = mysql_select_db("hw4",$con);
+	if (isset($_SESSION['uid'])) {
+		$sql = 'select * from Customers where UserID="'.$_SESSION['uid'].'"';
+	}
+	else {
+		header ('location: login_customer.php');
+	}
+	$result = mysql_query($sql);
+	$row = mysql_fetch_assoc($result);
+?>
+<html>
+<head>
+<!-- css -->
+	<link href="sec.css" rel="stylesheet" type="text/css" />
+<!-- javascript -->
+	<script type="text/javascript">
+	/* Part 0: Arrays */
+	// Existing User Arrays 
+	// (populate arrays from php sql)
+	// Industry Arrays
+	var ind1 = new Array('A: Agriculture, Forestry, And Fishing', 'B: Mining', 'C: Construction', 'D: Manufacturing', 'E: Transportation, Communications, Electric, Gas, And Sanitary Services', 'F: Wholesale Trade', 'G: Retail Trade', 'H: Finance, Insurance, And Real Estate', 'I: Services', 'J: Public Administration');
+	var ind2 = new Array();
+	ind2[0] = new Array();
+	ind2[1] = new Array('01: Agricultural Production Crops', '02: Agriculture production livestock and animal specialties', '07: Agricultural Services', '08: Forestry', '09: Fishing, hunting, and trapping');
+	ind2[2] = new Array('10: Metal Mining', '12: Coal Mining', '13: Oil And Gas Extraction', '14: Mining And Quarrying Of Nonmetallic Minerals, Except Fuels');
+	ind2[3] = new Array('15: Building Construction General Contractors And Operative Builders', '16: Heavy Construction Other Than Building Construction Contractors', '17: Construction Special Trade Contractors');
+	ind2[4] = new Array('20: Food And Kindred Products', '21: Tobacco Products', '22: Textile Mill Products', '23: Apparel And Other Finished Products Made From Fabrics And Similar Materials', '24: Lumber And Wood Products, Except Furniture', '25: Furniture And Fixtures', '26: Paper And Allied Products', '27: Printing, Publishing, And Allied Industries', '28: Chemicals And Allied Products', '29: Petroleum Refining And Related Industries', '30: Rubber And Miscellaneous Plastics Products', '31: Leather And Leather Products', '32: Stone, Clay, Glass, And Concrete Products', '33: Primary Metal Industries', '34: Fabricated Metal Products, Except Machinery And Transportation Equipment', '35: Industrial And Commercial Machinery And Computer Equipment', '36: Electronic And Other Electrical Equipment And Components, Except Computer Eq', '37: Transportation Equipment', '38: Measuring, Analyzing, And Controlling Instruments; Photographic, Medical And', '39: Miscellaneous Manufacturing Industries');
+	ind2[5] = new Array('40: Railroad Transportation', '41: Local And Suburban Transit And Interurban Highway Passenger Transportation', '42: Motor Freight Transportation And Warehousing', '43: United States Postal Service', '44: Water Transportation', '45: Transportation By Air', '46: Pipelines, Except Natural Gas', '47: Transportation Services', '48: Communications', '49: Electric, Gas, And Sanitary Servic es');
+	ind2[6] = new Array('50: Wholesale Trade-durable Goods', '51: Wholesale Trade-non-durable Goods');
+	ind2[7] = new Array('52: Building Materials Hardware Garden Supply And Mobile Home Dealers', '53: General Merchandise Stores', '54: Food Stores', '55: Automotive Dealers And Gasoline Service Stations', '56: Apparel And Accessory Stores', '57: Home Furniture Furnishings And Equipment Stores', '58: Eating And Drinking Places', '59: Miscellaneous Retail');
+	ind2[8] = new Array('60: Depository Institutions', '61: Non-depository Credit Institutions', '62: Security And Commodity Brokers, Dealers, Exchanges, And Services', '63: Insurance Carriers', '64: Insurance Agents, Brokers, And Service', '65: Real Estate', '67: Holding And Other Investment Offices');
+	ind2[9] = new Array('70: Hotels, Rooming Houses, Camps, And Other Lodging Places', '72: Personal Services', '73: Business Services', '75: Automotive Repair, Services, And Parking', '76: Miscellaneous Repair Services', '78: Motion Pictures', '79: Amusement And Recreation Services', '80: Health Services', '81: Legal Services', '82: Educational Services', '83: Social Services', '84: Museums, Art Galleries, And Botanical And Zoological Gardens', '86: Membership Organizations', '87: Engineering, Accounting, Research, Management, And Related Services', '88: Private Households', '89: Miscellaneous Services');
+	ind2[10] = new Array('91: Executive Legislative And General Government Except Finance', '92: Justice Public Order And Safety', '93: Public Finance Taxation And Monetary Policy', '94: Administration Of Human Resource Programs', '95: Administration Of Environmental Quality And Housing Programs', '96: Administration Of Economic Programs', '97: National Security And International Affairs', '99: Nonclassifiable Establishments');
+	var ind3_all = new Array("011: 	Cash Grains","013: 	Field Crops, Except Cash Grains","016: 	Vegetables And Melons","017: 	Fruits And Tree Nuts","018: 	Horticultural Specialties","019: 	General Farms, Primarily Crop","021: 	Livestock, Except Dairy And Poultry","024: 	Dairy Farms","025: 	Poultry And Eggs","027: 	Animal Specialties","029: 	General Farms, Primarily Livestock And Animal","071: 	Soil Preparation Services","072: 	Crop Services","074: 	Veterinary Services","075: 	Animal Services, Except Veterinary","076: 	Farm Labor And Management Services","078: 	Landscape And Horticultural Services","081: 	Timber Tracts","083: 	Forest Nurseries And Gathering Of Forest","085: 	Forestry Services","091: 	Commercial Fishing","092: 	Fish Hatcheries And Preserves","097: 	Hunting And Trapping, And Game Propagation","101: 	Iron Ores","102: 	Copper Ores","103: 	Lead And Zinc Ores","104: 	Gold And Silver Ores","106: 	Ferroalloy Ores, Except Vanadium","108: 	Metal Mining Services","109: 	Miscellaneous Metal Ores","122: 	Bituminous Coal And Lignite Mining","123: 	Anthracite Mining","124: 	Coal Mining Services","131: 	Crude Petroleum And Natural Gas","132: 	Natural Gas Liquids","138: 	Oil And Gas Field Services","141: 	Dimension Stone","142: 	Crushed And Broken Stone, Including Riprap","144: 	Sand And Gravel","145: 	Clay, Ceramic, And Refractory Minerals","147: 	Chemical And Fertilizer Mineral Mining","148: 	Nonmetallic Minerals Services, Except Fuels","149: 	Miscellaneous Nonmetallic Minerals, Except","152: 	General Building Contractors-residential","153: 	Operative Builders","154: 	General Building Contractors-nonresidential","161: 	Highway And Street Construction, Except","162: 	Heavy Construction, Except Highway And Street","171: 	Plumbing, Heating And Air-conditioning","172: 	Painting And Paper Hanging","173: 	Electrical Work","174: 	Masonry, Stonework, Tile Setting, And Plastering","175: 	Carpentry And Floor Work","176: 	Roofing, Siding, And Sheet Metal Work","177: 	Concrete Work","178: 	Water Well Drilling","179: 	Miscellaneous Special Trade Contractors","201: 	Meat Products","202: 	Dairy Products","203: 	Canned, Frozen, And Preserved Fruits, Vegetables, and Food Specialties","204: 	Grain Mill Products","205: 	Bakery Products","206: 	Sugar And Confectionery Products","207: 	Fats And Oils","208: 	Beverages","209: 	Miscellaneous Food Preparations And Kindred","211: 	Cigarettes","212: 	Cigars","213: 	Chewing And Smoking Tobacco And Snuff","214: 	Tobacco Stemming And Redrying","221: 	Broadwoven Fabric Mills, Cotton","222: 	Broadwoven Fabric Mills, Manmade Fiber And Silk","223: 	Broadwoven Fabric Mills, Wool (including Dyeing and Finishing)","224: 	Narrow Fabric And Other Smallwares Mills, Cotton, Wool, Silk, and Manmade Fiber","225: 	Knitting Mills","226: 	Dyeing And Finishing Textiles, Except Wool Fabrics","227: 	Carpets And Rugs","228: 	Yarn And Thread Mills","229: 	Miscellaneous Textile Goods","231: 	Men's And Boys' Suits, Coats, And Overcoats","232: 	Men's And Boys' Furnishings, Work Clothing, And Allied Garments","233: 	Women's, Misses', And Juniors' Outerwear","234: 	Women's, Misses', Children's, And Infants'","235: 	Hats, Caps, And Millinery","236: 	Girls', Children's, And Infants' Outerwear","237: 	Fur Goods","238: 	Miscellaneous Apparel And Accessories","239: 	Miscellaneous Fabricated Textile Products","241: 	Logging","242: 	Sawmills And Planing Mills","243: 	Millwork, Veneer, Plywood, And Structural Wood","244: 	Wood Containers","245: 	Wood Buildings And Mobile Homes","249: 	Miscellaneous Wood Products","251: 	Household Furniture","252: 	Office Furniture","253: 	Public Building And Related Furniture","254: 	Partitions, Shelving, Lockers, And Office And","259: 	Miscellaneous Furniture And Fixtures","261: 	Pulp Mills","262: 	Paper Mills","263: 	Paperboard Mills","265: 	Paperboard Containers And Boxes","267: 	Converted Paper And Paperboard Products, Except","271: 	Newspapers","272: 	Periodicals","273: 	Books","274: 	Miscellaneous Publishing","275: 	Commercial Printing","276: 	Manifold Business Forms","277: 	Greeting Cards","278: 	Blankbooks, Looseleaf Binders, And Bookbinding","279: 	Service Industries For The Printing Trade","281: 	Industrial Inorganic Chemicals","282: 	Plastics Materials And Synthetic Resins, Synthetic","283: 	Drugs","284: 	Soap, Detergents, And Cleaning Preparations; Perfumes, Cosmetics, and Other Toilet Preparations","285: 	Paints, Varnishes, Lacquers, Enamels, And Allied","286: 	Industrial Organic Chemicals","287: 	Agricultural Chemicals","289: 	Miscellaneous Chemical Products","291: 	Petroleum Refining","295: 	Asphalt Paving And Roofing Materials","299: 	Miscellaneous Products Of Petroleum And Coal","301: 	Tires And Inner Tubes","302: 	Rubber And Plastics Footwear","305: 	Gaskets, Packing, And Sealing Devices And Rubber","306: 	Fabricated Rubber Products, Not Elsewhere","308: 	Miscellaneous Plastics Products","311: 	Leather Tanning And Finishing","313: 	Boot And Shoe Cut Stock And Findings","314: 	Footwear, Except Rubber","315: 	Leather Gloves And Mittens","316: 	Luggage","317: 	Handbags And Other Personal Leather Goods","319: 	Leather Goods, Not Elsewhere Classified","321: 	Flat Glass","322: 	Glass And Glassware, Pressed Or Blown","323: 	Glass Products, Made Of Purchased Glass","324: 	Cement, Hydraulic","325: 	Structural Clay Products","326: 	Pottery And Related Products","327: 	Concrete, Gypsum, And Plaster Products","328: 	Cut Stone And Stone Products","329: 	Abrasive, Asbestos, And Miscellaneous","331: 	Steel Works, Blast Furnaces, And Rolling And Finishing Mills","332: 	Iron And Steel Foundries","333: 	Primary Smelting And Refining Of Nonferrous","334: 	Secondary Smelting And Refining Of Nonferrous","335: 	Rolling, Drawing, And Extruding Of Nonferrous","336: 	Nonferrous Foundries (castings)","339: 	Miscellaneous Primary Metal Products","341: 	Metal Cans And Shipping Containers","342: 	Cutlery, Handtools, And General Hardware","343: 	Heating Equipment, Except Electric And Warm Air;","344: 	Fabricated Structural Metal Products","345: 	Screw Machine Products, And Bolts, Nuts, Screws, Rivets, And Washers","346: 	Metal Forgings And Stampings","347: 	Coating, Engraving, And Allied Services","348: 	Ordnance And Accessories, Except Vehicles And Guided Missiles","349: 	Miscellaneous Fabricated Metal Products","351: 	Engines And Turbines","352: 	Farm And Garden Machinery And Equipment","353: 	Construction, Mining, And Materials Handling","354: 	Metalworking Machinery And Equipment","355: 	Special Industry Machinery, Except Metalworking","356: 	General Industrial Machinery And Equipment","357: 	Computer And Office Equipment","358: 	Refrigeration And Service Industry Machinery","359: 	Miscellaneous Industrial And Commercial","361: 	Electric Transmission And Distribution Equipment","362: 	Electrical Industrial Apparatus","363: 	Household Appliances","364: 	Electric Lighting And Wiring Equipment","365: 	Household Audio And Video Equipment, And Audio","366: 	Communications Equipment","367: 	Electronic Components And Accessories","369: 	Miscellaneous Electrical Machinery, Equipment, and Supplies","371: 	Motor Vehicles And Motor Vehicle Equipment","372: 	Aircraft And Parts","373: 	Ship And Boat Building And Repairing","374: 	Railroad Equipment","375: 	Motorcycles, Bicycles, And Parts","376: 	Guided Missiles And Space Vehicles And Parts","379: 	Miscellaneous Transportation Equipment","381: 	Search, Detection, Navigation, Guidance, Aeronautical, and Nautical Systems, Instruments, and Equipment","382: 	Laboratory Apparatus And Analytical, Optical, Measuring, and Controlling Instruments","384: 	Surgical, Medical, And Dental Instruments And Supplies","385: 	Ophthalmic Goods","386: 	Photographic Equipment And Supplies","387: 	Watches, Clocks, Clockwork Operated Devices, and Parts","391: 	Jewelry, Silverware, And Plated Ware","393: 	Musical Instruments","394: 	Dolls, Toys, Games And Sporting And Athletic","395: 	Pens, Pencils, And Other Artists Materials","396: 	Costume Jewelry, Costume Novelties, Buttons, And Miscellaneous Notions, Ecept Precious Metal","399: 	Miscellaneous Manufacturing Industries","401: 	Railroads","411: 	Local And Suburban Passenger Transportation","412: 	Taxicabs","413: 	Intercity And Rural Bus Transportation","414: 	Bus Charter Service","415: 	School Buses","417: 	Terminal And Service Facilities For Motor Vehicle","421: 	Trucking And Courier Services, Except Air","422: 	Public Warehousing And Storage","423: 	Terminal And Joint Terminal Maintenance","431: 	United States Postal Service","441: 	Deep Sea Foreign Transportation Of Freight","442: 	Deep Sea Domestic Transportation Of Freight","443: 	Freight Transportation On The Great Lakes-st.","444: 	Water Transportation Of Freight, Not Elsewhere","448: 	Water Transportation Of Passengers","449: 	Services Incidental To Water Transportation","451: 	Air Transportation, Scheduled, And Air Courier","452: 	Air Transportation, Nonscheduled","458: 	Airports, Flying Fields, And Airport Terminal","461: 	Pipelines, Except Natural Gas","472: 	Arrangement Of Passenger Transportation","473: 	Arrangement Of Transportation Of Freight And Cargo","474: 	Rental Of Railroad Cars","478: 	Miscellaneous Services Incidental To Transportation","481: 	Telephone Communications","482: 	Telegraph And Other Message Communications","483: 	Radio And Television Broadcasting Stations","484: 	Cable And Other Pay Television Services","489: 	Communications Services, Not Elsewhere","491: 	Electric Services","492: 	Gas Production And Distribution","493: 	Combination Electric And Gas, And Other Utility","494: 	Water Supply","495: 	Sanitary Services","496: 	Steam And Air-conditioning Supply","497: 	Irrigation Systems","501: 	Motor Vehicles And Motor Vehicle Parts And Supplies","502: 	Furniture And Home Furnishings","503: 	Lumber And Other Construction Materials","504: 	Professional And Commercial Equipment And Supplies","505: 	Metals And Minerals, Except Petroleum","506: 	Electrical Goods","507: 	Hardware, And Plumbing And Heating Equipment","508: 	Machinery, Equipment, And Supplies","509: 	Miscellaneous Durable Goods","511: 	Paper And Paper Products","512: 	Drugs, Drug Proprietaries, And Druggists' Sundries","513: 	Apparel, Piece Goods, And Notions","514: 	Groceries And Related Products","515: 	Farm-product Raw Materials","516: 	Chemicals And Allied Products","517: 	Petroleum And Petroleum Products","518: 	Beer, Wine, And Distilled Alcoholic Beverages","519: 	Miscellaneous Non-durable Goods","521: 	Lumber And Other Building Materials Dealers","523: 	Paint, Glass And Wallpaper Stores","525: 	Hardware Stores","526: 	Retail Nurseries, Lawn And Garden Supply Stores","527: 	Mobile Home Dealers","531: 	Department Stores","533: 	Variety Stores","539: 	Miscellaneous General Merchandise Stores","541: 	Grocery Stores","542: 	Meat And Fish (seafood) Markets, Including","543: 	Fruit And Vegetable Markets","544: 	Candy, Nut, And Confectionery Stores","545: 	Dairy Products Stores","546: 	Retail Bakeries","549: 	Miscellaneous Food Stores","551: 	Motor Vehicle Dealers (new And Used)","552: 	Motor Vehicle Dealers (used Only)","553: 	Auto And Home Supply Stores","554: 	Gasoline Service Stations","555: 	Boat Dealers","556: 	Recreational Vehicle Dealers","557: 	Motorcycle Dealers","559: 	Automotive Dealers, Not Elsewhere Classified","561: 	Men's And Boys' Clothing And Accessory Stores","562: 	Women's Clothing Stores","563: 	Women's Accessory And Specialty Stores","564: 	Children's And Infants' Wear Stores","565: 	Family Clothing Stores","566: 	Shoe Stores","569: 	Miscellaneous Apparel And Accessory Stores","571: 	Home Furniture And Furnishings Stores","572: 	Household Appliance Stores","573: 	Radio, Television, Consumer Electronics, And Music Stores","581: 	Eating And Drinking Places","591: 	Drug Stores And Proprietary Stores","592: 	Liquor Stores","593: 	Used Merchandise Stores","594: 	Miscellaneous Shopping Goods Stores","596: 	Nonstore Retailers","598: 	Fuel Dealers","599: 	Retail Stores, Not Elsewhere Classified","601: 	Central Reserve Depository Institutions","602: 	Commercial Banks","603: 	Savings Institutions","606: 	Credit Unions","608: 	Foreign Banking And Branches And Agencies Of","609: 	Functions Related To Depository Banking","611: 	Federal And Federally-sponsored Credit Agencies","614: 	Personal Credit Institutions","615: 	Business Credit Institutions","616: 	Mortgage Bankers And Brokers","621: 	Security Brokers, Dealers, And Flotation","622: 	Commodity Contracts Brokers And Dealers","623: 	Security And Commodity Exchanges","628: 	Services Allied With The Exchange Of Securities","631: 	Life Insurance","632: 	Accident And Health Insurance And Medical","633: 	Fire, Marine, And Casualty Insurance","635: 	Surety Insurance","636: 	Title Insurance","637: 	Pension, Health, And Welfare Funds","639: 	Insurance Carriers, Not Elsewhere Classified","641: 	Insurance Agents, Brokers, And Service","651: 	Real Estate Operators (except Developers) And Lessors","653: 	Real Estate Agents And Managers","654: 	Title Abstract Offices","655: 	Land Subdividers And Developers","671: 	Holding Offices","672: 	Investment Offices","673: 	Trusts","679: 	Miscellaneous Investing","701: 	Hotels And Motels","702: 	Rooming And Boarding Houses","703: 	Camps And Recreational Vehicle Parks","704: 	Organization Hotels And Lodging Houses, On","721: 	Laundry, Cleaning, And Garment Services","722: 	Photographic Studios, Portrait","723: 	Beauty Shops","724: 	Barber Shops","725: 	Shoe Repair Shops And Shoeshine Parlors","726: 	Funeral Service And Crematories","729: 	Miscellaneous Personal Services","731: 	Advertising","732: 	Consumer Credit Reporting Agencies, Mercantile","733: 	Mailing, Reproduction, Commercial Art And Photography, and Stenographic Services","734: 	Services To Dwellings And Other Buildings","735: 	Miscellaneous Equipment Rental And Leasing","736: 	Personnel Supply Services","737: 	Computer Programming, Data Processing, And Other Computer Related Services","738: 	Miscellaneous Business Services","751: 	Automotive Rental And Leasing, Without Drivers","752: 	Automobile Parking","753: 	Automotive Repair Shops","754: 	Automotive Services, Except Repair","762: 	Electrical Repair Shops","763: 	Watch, Clock, And Jewelry Repair","764: 	Reupholstery And Furniture Repair","769: 	Miscellaneous Repair Shops And Related Services","781: 	Motion Picture Production And Allied Services","782: 	Motion Picture Distribution And Allied Services","783: 	Motion Picture Theaters","784: 	Video Tape Rental","791: 	Dance Studios, Schools, And Halls","792: 	Theatrical Producers (except Motion Picture),","793: 	Bowling Centers","794: 	Commercial Sports","799: 	Miscellaneous Amusement And Recreation","801: 	Offices And Clinics Of Doctors Of Medicine","802: 	Offices And Clinics Of Dentists","803: 	Offices And Clinics Of Doctors Of Osteopathy","804: 	Offices And Clinics Of Other Health Practitioners","805: 	Nursing And Personal Care Facilities","806: 	Hospitals","807: 	Medical And Dental Laboratories","808: 	Home Health Care Services","809: 	Miscellaneous Health And Allied Services, Not","811: 	Legal Services","821: 	Elementary And Secondary Schools","822: 	Colleges, Universities, Professional Schools, And","823: 	Libraries","824: 	Vocational Schools","829: 	Schools And Educational Services, Not Elsewhere","832: 	Individual And Family Social Services","833: 	Job Training And Vocational Rehabilitation","835: 	Child Day Care Services","836: 	Residential Care","839: 	Social Services, Not Elsewhere Classified","841: 	Museums And Art Galleries","842: 	Arboreta And Botanical Or Zoological Gardens","861: 	Business Associations","862: 	Professional Membership Organizations","863: 	Labor Unions And Similar Labor Organizations","864: 	Civic, Social, And Fraternal Associations","865: 	Political Organizations","866: 	Religious Organizations","869: 	Membership Organizations, Not Elsewhere","871: 	Engineering, Architectural, And Surveying","872: 	Accounting, Auditing, And Bookkeeping Services","873: 	Research, Development, And Testing Services","874: 	Management And Public Relations Services","881: 	Private Households","899: 	Miscellaneous Services","911: 	Executive Offices","912: 	Legislative Bodies","913: 	Executive And Legislative Offices Combined","919: 	General Government, Not Elsewhere Classified","921: 	Courts","922: 	Public Order And Safety","931: 	Public Finance, Taxation, And Monetary Policy","941: 	Administration Of Educational Programs","943: 	Administration Of Public Health Programs","944: 	Administration Of Social, Human Resource And","945: 	Administration Of Veteran's Affairs, Except","951: 	Administration Of Environmental Quality","953: 	Administration Of Housing And Urban","961: 	Administration Of General Economic Programs","962: 	Regulation And Administration Of Transportation","963: 	Regulation And Administration Of","964: 	Regulation Of Agricultural Marketing And","965: 	Regulation, Licensing, And Inspection Of","966: 	Space Research And Technology","971: 	National Security","972: 	International Affairs","999: 	Nonclassifiable Establishments"); 
+	var ind4_all = new Array("0111:  Wheat","0112:  Rice","0115:  Corn","0116:  Soybeans","0119:  Cash Grains, Not Elsewhere Classified","0131:  Cotton","0132:  Tobacco","0133:  Sugarcane and Sugar Beets","0134:  Irish Potatoes","0139:  Field Crops, Except Cash Grains, Not Elsewhere Classified","0161:  Vegetables and Melons","0171:  Berry Crops","0172:  Grapes","0173:  Tree Nuts","0174:  Citrus Fruits","0175:  Deciduous Tree Fruits","0179:  Fruits and Tree Nuts, Not Elsewhere Classified","0181:  Ornamental Floriculture and Nursery Products","0182:  Food Crops Grown Under Cover","0191:  General Farms, Primarily Crop","0211:  Beef Cattle Feedlots","0212:  Beef Cattle, Except Feedlots","0213:  Hogs","0214:  Sheep and Goats","0219:  General Livestock, Except Dairy and Poultry","0241:  Dairy Farms","0251:  Broiler, Fryer, and Roaster Chickens","0252:  Chicken Eggs","0253:  Turkeys and Turkey Eggs","0254:  Poultry Hatcheries","0259:  Poultry and Eggs, Not Elsewhere Classified","0271:  Fur-Bearing Animals and Rabbits","0272:  Horses and Other Equines","0273:  Animal Aquaculture","0279:  Animal Specialties, Not Elsewhere Classified","0291:  General Farms, Primarily Livestock and Animal Specialties","0711:  Soil Preparation Services","0721:  Crop Planting, Cultivating, and Protecting","0722:  Crop Harvesting, Primarily by Machine","0723:  Crop Preparation Services for Market, Except Cotton Ginning","0724:  Cotton Ginning","0741:  Veterinary Services for Livestock","0742:  Veterinary Services for Animal Specialties","0751:  Livestock Services, Except Veterinary","0752:  Animal Specialty Services, Except Veterinary","0761:  Farm Labor Contractors and Crew Leaders","0762:  Farm Management Services","0781:  Landscape Counseling and Planning","0782:  Lawn and Garden Services","0783:  Ornamental Shrub and Tree Services","0811:  Timber Tracts","0831:  Forest Nurseries and Gathering of Forest Products","0851:  Forestry Services","0912:  Finfish","0913:  Shellfish","0919:  Miscellaneous Marine Products","0921:  Fish Hatcheries and Preserves","0971:  Hunting and Trapping, and Game Propagation","1011:  Iron Ores","1021:  Copper Ores","1031:  Lead and Zinc Ores","1041:  Gold Ores","1044:  Silver Ores","1061:  Ferroalloy Ores, Except Vanadium","1081:  Metal Mining Services","1094:  Uranium-Radium-Vanadium Ores","1099:  Miscellaneous Metal Ores, Not Elsewhere Classified","1221:  Bituminous Coal and Lignite Surface Mining","1222:  Bituminous Coal Underground Mining","1231:  Anthracite Mining","1241:  Coal Mining Services","1311:  Crude Petroleum and Natural Gas","1321:  Natural Gas Liquids","1381:  Drilling Oil and Gas Wells","1382:  Oil and Gas Field Exploration Services","1389:  Oil and Gas Field Services, Not Elsewhere Classified","1411:  Dimension Stone","1422:  Crushed and Broken Limestone","1423:  Crushed and Broken Granite","1429:  Crushed and Broken Stone, Not Elsewhere Classified","1442:  Construction Sand and Gravel","1446:  Industrial Sand","1455:  Kaolin and Ball Clay","1459:  Clay, Ceramic, and Refractory Minerals, Not Elsewhere Classified","1474:  Potash, Soda, and Borate Minerals","1475:  Phosphate Rock","1479:  Chemical and Fertilizer Mineral Mining, Not Elsewhere Classified","1481:  Nonmetallic Minerals Services, Except Fuels","1499:  Miscellaneous Nonmetallic Minerals, Except Fuels","1521:  General Contractors-Single-Family Houses","1522:  General Contractors-Residential Buildings, Other Than Single-Family","1531:  Operative Builders","1541:  General Contractors-Industrial Buildings and Warehouses","1542:  General Contractors-Nonresidential Buildings, Other than Industrial Buildings and Warehouses","1611:  Highway and Street Construction, Except Elevated Highways","1622:  Bridge, Tunnel, and Elevated Highway Construction","1623:  Water, Sewer, Pipeline, and Communications and Power Line Construction","1629:  Heavy Construction, Not Elsewhere Classified","1711:  Plumbing, Heating and Air-Conditioning","1721:  Painting and Paper Hanging","1731:  Electrical Work","1741:  Masonry, Stone Setting, and Other Stone Work","1742:  Plastering, Drywall, Acoustical, and Insulation Work","1743:  Terrazzo, Tile, Marble, and Mosaic Work","1751:  Carpentry Work","1752:  Floor Laying and Other Floor Work, Not Elsewhere Classified","1761:  Roofing, Siding, and Sheet Metal Work","1771:  Concrete Work","1781:  Water Well Drilling","1791:  Structural Steel Erection","1793:  Glass and Glazing Work","1794:  Excavation Work","1795:  Wrecking and Demolition Work","1796:  Installation or Erection of Building Equipment, Not Elsewhere","1799:  Special Trade Contractors, Not Elsewhere Classified","2011:  Meat Packing Plants","2013:  Sausages and Other Prepared Meat Products","2015:  Poultry Slaughtering and Processing","2021:  Creamery Butter","2022:  Natural, Processed, and Imitation Cheese","2023:  Dry, Condensed, and Evaporated Dairy Products","2024:  Ice Cream and Frozen Desserts","2026:  Fluid Milk","2032:  Canned Specialties","2033:  Canned Fruits, Vegetables, Preserves, Jams, and Jellies","2034:  Dried and Dehydrated Fruits, Vegetables, and Soup Mixes","2035:  Pickled Fruits and Vegetables, Vegetable Sauces and Seasonings, and Salad Dressings","2037:  Frozen Fruits, Fruit Juices, and Vegetables","2038:  Frozen Specialties, Not Elsewhere Classified","2041:  Flour and Other Grain Mill Products","2043:  Cereal Breakfast Foods","2044:  Rice Milling","2045:  Prepared Flour Mixes and Doughs","2046:  Wet Corn Milling","2047:  Dog and Cat Food","2048:  Prepared Feed and Feed Ingredients for Animals and Fowls, Except Dogs and Cats","2051:  Bread and Other Bakery Products, Except Cookies and Crackers","2052:  Cookies and Crackers","2053:  Frozen Bakery Products, Except Bread","2061:  Cane Sugar, Except Refining","2062:  Cane Sugar Refining","2063:  Beet Sugar","2064:  Candy and Other Confectionery Products","2066:  Chocolate and Cocoa Products","2067:  Chewing Gum","2068:  Salted and Roasted Nuts and Seeds","2074:  Cottonseed Oil Mills","2075:  Soybean Oil Mills","2076:  Vegetable Oil Mills, Except Corn, Cottonseed, and Soybean","2077:  Animal and Marine Fats and Oils","2079:  Shortening, Table Oils, Margarine, and Other Edible Fats and Oils, Not Elsewhere Classified","2082:  Malt Beverages","2083:  Malt","2084:  Wines, Brandy, and Brandy Spirits","2085:  Distilled and Blended Liquors","2086:  Bottled and Canned Soft Drinks and Carbonated Waters","2087:  Flavoring Extracts and Flavoring Syrups, Not Elsewhere Classified","2091:  Canned and Cured Fish and Seafoods","2092:  Prepared Fresh or Frozen Fish and Seafoods","2095:  Roasted Coffee","2096:  Potato Chips, Corn Chips, and Similar Snacks","2097:  Manufactured Ice","2098:  Macaroni, Spaghetti, Vermicelli, and Noodles","2099:  Food Preparations, Not Elsewhere Classified","2111:  Cigarettes","2121:  Cigars","2131:  Chewing and Smoking Tobacco and Snuff","2141:  Tobacco Stemming and Redrying","2211:  Broadwoven Fabric Mills, Cotton","2221:  Broadwoven Fabric Mills, Manmade Fiber and Silk","2231:  Broadwoven Fabric Mills, Wool (Including Dyeing and Finishing)","2241:  Narrow Fabric and Other Smallware Mills","2251:  Women's Full-Length and Knee-Length Hosiery, Except Socks","2252:  Hosiery, Not Elsewhere Classified","2253:  Knit Outerwear Mills","2254:  Knit Underwear and Nightwear Mills","2257:  Weft Knit Fabric Mills","2258:  Lace and Warp Knit Fabric Mills","2259:  Knitting Mills, Not Elsewhere Classified","2261:  Finishers of Broadwoven Fabrics of Cotton","2262:  Finishers of Broadwoven Fabrics of Manmade Fiber and Silk","2269:  Finishers of Textiles, Not elsewhere Classified","2273:  Carpets and Rugs","2281:  Yarn Spinning Mills","2282:  Yarn Texturizing, Throwing, Twisting, and Winding Mills","2284:  Thread Mills","2295:  Coated Fabrics, Not Rubberized","2296:  Tire Cord and Fabrics","2297:  Non-woven Fabrics","2298:  Cordage and Twine","2299:  Textile goods, Not Elsewhere Classified","2311:  Men's and Boys' Suits, Coats, and Overcoats","2321:  Men's and Boys' Shirts, Except Work Shirts","2322:  Men's and Boys' Underwear and Nightwear","2323:  Men's and Boys' Neckwear","2325:  Men's and Boys' Separate Trousers and Slacks","2326:  Men's and Boys' Work Clothing","2329:  Men's and Boys' Clothing, Not Elsewhere Classified","2331:  Women's, Misses', and Juniors' Blouses and Shirts","2335:  Women's, Misses', and Juniors' Dresses","2337:  Women's, Misses', and Juniors' Suits, Skirts, and Coats","2339:  Women's, Misses', and Juniors' Outerwear, Not Elsewhere Classified","2341:  Women's, Misses', Children's, and Infants' Underwear and Nightwear","2342:  Brassieres, Girdles, and Allied Garments","2353:  Hats, Caps, and Millinery","2361:  Girls', Children's, and Infants' Dresses, Blouses, and Shirts","2369:  Girls', Children's, and Infants' Outerwear, Not Elsewhere Classified","2371:  Fur Goods","2381:  Dress and Work Gloves, Except Knit and All-Leather","2384:  Robes and Dressing Gowns","2385:  Waterproof Outerwear","2386:  Leather and Sheep-Lined Clothing","2387:  Apparel belts","2389:  Apparel and Accessories, Not Elsewhere Classified","2391:  Curtains and Draperies","2392:  House furnishing, Except Curtains and Draperies","2393:  Textile Bags","2394:  Canvas and Related Products","2395:  Pleating, Decorative and Novelty Stitching, and Tucking for the Trade","2396:  Automotive Trimmings, Apparel Findings, and Related Products","2397:  Schiffli Machine Embroideries","2399:  Fabricated Textile Products, Not Elsewhere Classified","2411:  Logging","2421:  Sawmills and Planing Mills, General","2426:  Hardwood Dimension and Flooring Mills","2429:  Special Product Sawmills, Not Elsewhere Classified","2431:  Millwork","2434:  Wood Kitchen Cabinets","2435:  Hardwood Veneer and Plywood","2436:  Softwood Veneer and Plywood","2439:  Structural Wood Members, Not Elsewhere Classified","2441:  Nailed and Lock Corner Wood Boxes and Shook","2448:  Wood Pallets and Skids","2449:  Wood Containers, Not Elsewhere Classified","2451:  Mobile Homes","2452:  Prefabricated Wood Buildings and Components","2491:  Wood Preserving","2493:  Reconstituted Wood Products","2499:  Wood Products, Not Elsewhere Classified","2511:  Wood Household Furniture, Except Upholstered","2512:  Wood Household Furniture, Upholstered","2514:  Metal Household Furniture","2515:  Mattresses, Foundations, and Convertible Beds","2517:  Wood Television, Radio, Phonograph, and Sewing Machine Cabinets","2519:  Household Furniture, Not Elsewhere Classified","2521:  Wood Office Furniture","2522:  Office Furniture, Except Wood","2531:  Public Building and Related Furniture","2541:  Wood Office and Store Fixtures, Partitions, Shelving, and Lockers","2542:  Office and Store Fixtures, Partitions, Shelving, and Lockers, Except Wood","2591:  Drapery Hardware and Window Blinds and Shades","2599:  Furniture and Fixtures, Not Elsewhere Classified","2611:  Pulp Mills","2621:  Paper Mills","2631:  Paperboard Mills","2652:  Setup Paperboard Boxes","2653:  Corrugated and Solid Fiber Boxes","2655:  Fiber Cans, Tubes, Drums, and Similar Products","2656:  Sanitary Food Containers, Except Folding","2657:  Folding Paperboard Boxes, Including Sanitary","2671:  Packaging Paper and Plastics Film, Coated and Laminated","2672:  Coated and Laminated Paper, Not Elsewhere Classified","2673:  Plastics, Foil, and Coated Paper Bags","2674:  Uncoated Paper and Multiwall Bags","2675:  Die-Cut Paper and Paperboard and Cardboard","2676:  Sanitary Paper Products","2677:  Envelopes","2678:  Stationery, Tablets, and Related Products","2679:  Converted Paper and Paperboard Products, Not Elsewhere Classified","2711:  Newspapers","2721:  Periodicals","2731:  Books","2732:  Book Printing","2741:  Miscellaneous Publishing","2752:  Commercial Printing, Lithographic","2754:  Commercial Printing, Gravure","2759:  Commercial Printing, Not Elsewhere Classified","2761:  Manifold Business Forms","2771:  Greeting Cards","2782:  Blankbooks, Looseleaf Binders and Devices","2789:  Bookbinding and Related Work","2791:  Typesetting","2796:  Platemaking and Related Services","2812:  Alkalies and Chlorine","2813:  Industrial Gases","2816:  Inorganic Pigments","2819:  Industrial Inorganic Chemicals, Not Elsewhere Classified","2821:  Plastics Materials, Synthetic Resins, and Nonvulcanizable Elastomers","2822:  Synthetic Rubber (Vulcanizable Elastomers)","2823:  Cellulosic Manmade Fibers","2824:  Manmade Organic Fibers, Except Cellulosic","2833:  Medicinal Chemicals and Botanical Products","2834:  Pharmaceutical Preparations","2835:  In Vitro and In Vivo Diagnostic Substances","2836:  Biological Products, Except Diagnostic Substances","2841:  Soap and Other Detergents, Except Specialty Cleaners","2842:  Specialty Cleaning, Polishing, and Sanitation Preparations","2843:  Surface Active Agents, Finishing Agents, Sulfonated Oils, and Assistants","2844:  Perfumes, Cosmetics, and Other Toilet Preparations","2851:  Paints, Varnishes, Lacquers, Enamels, and Allied Products","2861:  Gum and Wood Chemicals","2865:  Cyclic Organic Crudes and Intermediates, and Organic Dyes and Pigments","2869:  Industrial Organic Chemicals, Not Elsewhere Classified","2873:  Nitrogenous Fertilizers","2874:  Phosphatic Fertilizers","2875:  Fertilizers, Mixing Only","2879:  Pesticides and Agricultural Chemicals, Not Elsewhere Classified","2891:  Adhesives and Sealants","2892:  Explosives","2893:  Printing Ink","2895:  Carbon Black","2899:  Chemicals and Chemical Preparations, Not Elsewhere Classified","2911:  Petroleum Refining","2951:  Asphalt Paving Mixtures and Blocks","2952:  Asphalt Felts and Coatings","2992:  Lubricating Oils and Greases","2999:  Products of Petroleum and Coal, Not Elsewhere Classified","3011:  Tires and Inner Tubes","3021:  Rubber and Plastics Footwear","3052:  Rubber and Plastics Hose and Belting","3053:  Gaskets, Packing, and Sealing Devices","3061:  Molded, Extruded, and Lathe-Cut Mechanical Rubber Goods","3069:  Fabricated Rubber Products, Not Elsewhere Classified","3081:  Unsupported Plastics Film and Sheet","3082:  Unsupported Plastics Profile Shapes","3083:  Laminated Plastics Plate, Sheet, and Profile Shapes","3084:  Plastics Pipe","3085:  Plastics Bottles","3086:  Plastics Foam Products","3087:  Custom Compounding of Purchased Plastics Resins","3088:  Plastics Plumbing Fixtures","3089:  Plastics Products, Not Elsewhere Classified","3111:  Leather Tanning and Finishing","3131:  Boot and Shoe Cut Stock and Findings","3142:  House Slippers","3143:  Men's Footwear, Except Athletic","3144:  Women's Footwear, Except Athletic","3149:  Footwear, Except Rubber, Not Elsewhere Classified","3151:  Leather Gloves and Mittens","3161:  Luggage","3171:  Women's Handbags and Purses","3172:  Personal Leather Goods, Except Women's Handbags and Purses","3199:  Leather Goods, Not Elsewhere Classified","3211:  Flat Glass","3221:  Glass Containers","3229:  Pressed and Blown Glass and Glassware, Not Elsewhere Classified","3231:  Glass Products, Made of Purchased Glass","3241:  Cement, Hydraulic","3251:  Brick and Structural Clay Tile","3253:  Ceramic Wall and Floor Tile","3255:  Clay Refractories","3259:  Structural Clay Products, Not Elsewhere Classified","3261:  Vitreous China Plumbing Fixtures and China and Earthenware Fittings and Bathroom Accessories","3262:  Vitreous China Table and Kitchen Articles","3263:  Fine Earthenware (Whiteware) Table and Kitchen Articles","3264:  Porcelain Electrical Supplies","3269:  Pottery Products, Not Elsewhere Classified","3271:  Concrete Block and Brick","3272:  Concrete Products, Except Block and Brick","3273:  Ready-Mixed Concrete","3274:  Lime","3275:  Gypsum Products","3281:  Cut Stone and Stone Products","3291:  Abrasive Products","3292:  Asbestos Products","3295:  Minerals and Earths, Ground or Otherwise Treated","3296:  Mineral Wool","3297:  Nonclay Refractories","3299:  Nonmetallic Mineral Products, Not Elsewhere Classified","3312:  Steel Works, Blast Furnaces (Including Coke Ovens), and Rolling Mills","3313:  Electrometallurgical Products, Except Steel","3315:  Steel Wiredrawing and Steel Nails and Spikes","3316:  Cold-Rolled Steel Sheet, Strip, and Bars","3317:  Steel Pipe and Tubes","3321:  Gray and Ductile Iron Foundries","3322:  Malleable Iron Foundries","3324:  Steel Investment Foundries","3325:  Steel Foundries, Not Elsewhere Classified","3331:  Primary Smelting and Refining of Copper","3334:  Primary Production of Aluminum","3339:  Primary Smelting and Refining of Nonferrous Metals, Except Copper and Aluminum","3341:  Secondary Smelting and Refining of Nonferrous Metals","3351:  Rolling, Drawing, and Extruding Of Copper","3353:  Aluminum Sheet, Plate, and Foil","3354:  Aluminum Extruded Products","3355:  Aluminum Rolling and Drawing, Not Elsewhere Classified","3356:  Rolling, Drawing, and Extruding of Nonferrous Metals, Except Copper and Aluminum","3357:  Drawing and Insulating of Nonferrous Wire","3363:  Aluminum Die-Castings","3364:  Nonferrous Die-Castings, Except Aluminum","3365:  Aluminum Foundries","3366:  Copper Foundries","3369:  Nonferrous Foundries, Except Aluminum and Copper","3398:  Metal Heat Treating","3399:  Primary Metal Products, Not Elsewhere Classified","3411:  Metal Cans","3412:  Metal Shipping Barrels, Drums, Kegs, and Pails","3421:  Cutlery","3423:  Hand and Edge Tools, Except Machine Tools and Handsaws","3425:  Saw Blades and Handsaws","3429:  Hardware, Not Elsewhere Classified","3431:  Enameled Iron and Metal Sanitary Ware","3432:  Plumbing Fixture Fittings and Trim","3433:  Heating Equipment, Except Electric and Warm Air Furnaces","3441:  Fabricated Structural Metal","3442:  Metal Doors, Sash, Frames, Molding, and Trim Manufacturing","3443:  Fabricated Plate Work (Boiler Shops)","3444:  Sheet Metal Work","3446:  Architectural and Ornamental Metal Work","3448:  Prefabricated Metal Buildings and Components","3449:  Miscellaneous Structural Metal Work","3451:  Screw Machine Products","3452:  Bolts, Nuts, Screws, Rivets, and Washers","3462:  Iron and Steel Forgings","3463:  Nonferrous Forgings","3465:  Automotive Stampings","3466:  Crowns and Closures","3469:  Metal Stampings, Not Elsewhere Classified","3471:  Electroplating, Plating, Polishing, Anodizing, and Coloring","3479:  Coating, Engraving, and Allied Services, Not Elsewhere Classified","3482:  Small Arms Ammunition","3483:  Ammunition, Except for Small Arms","3484:  Small Arms","3489:  Ordnance and Accessories, Not Elsewhere Classified","3491:  Industrial Valves","3492:  Fluid Power Valves and Hose Fittings","3493:  Steel Springs, Except Wire","3494:  Valves and Pipe Fittings, Not Elsewhere Classified","3495:  Wire Springs","3496:  Miscellaneous Fabricated Wire Products","3497:  Metal Foil and Leaf","3498:  Fabricated Pipe and Pipe Fittings","3499:  Fabricated Metal Products, Not Elsewhere Classified","3511:  Steam, Gas, and Hydraulic Turbines, and Turbine Generator Set Units","3519:  Internal Combustion Engines, Not Elsewhere Classified","3523:  Farm Machinery and Equipment","3524:  Lawn and Garden Tractors and Home Lawn and Garden Equipment","3531:  Construction Machinery and Equipment","3532:  Mining Machinery and Equipment, Except Oil and Gas Field Machinery and Equipment","3533:  Oil and Gas Field Machinery and Equipment","3534:  Elevators and Moving Stairways","3535:  Conveyors and Conveying Equipment","3536:  Overhead Traveling Cranes, Hoists, and Monorail Systems","3537:  Industrial Trucks, Tractors, Trailers, and Stackers","3541:  Machine Tools, Metal Cutting Types","3542:  Machine Tools, Metal Forming Types","3543:  Industrial Patterns","3544:  Special Dies and Tools, Die Sets, Jigs and Fixtures, and Industrial Molds","3545:  Cutting Tools, Machine Tool Accessories, and Machinists' Precision Measuring Devices","3546:  Power-Driven Handtools","3547:  Rolling Mill Machinery and Equipment","3548:  Electric and Gas Welding and Soldering Equipment","3549:  Metalworking Machinery, Not Elsewhere Classified","3552:  Textile Machinery","3553:  Woodworking Machinery","3554:  Paper Industries Machinery","3555:  Printing Trades Machinery and Equipment","3556:  Food Products Machinery","3559:  Special Industry Machinery, Not Elsewhere Classified","3561:  Pumps and Pumping Equipment","3562:  Ball and Roller Bearings","3563:  Air and Gas Compressors","3564:  Industrial and Commercial Fans and Blowers and Air Purification Equipment","3565:  Packaging Machinery","3566:  Speed Changers, Industrial High-Speed Drives, and Gears","3567:  Industrial Process Furnaces and Ovens","3568:  Mechanical Power Transmission Equipment, Not Elsewhere Classified","3569:  General Industrial Machinery and Equipment, Not Elsewhere","3571:  Electronic Computers","3572:  Computer Storage Devices","3575:  Computer Terminals","3577:  Computer Peripheral Equipment, Not Elsewhere Classified","3578:  Calculating and Accounting Machines, Except Electronic Computers","3579:  Office Machines, Not Elsewhere Classified","3581:  Automatic Vending Machines","3582:  Commercial Laundry, Drycleaning, and Pressing Machines","3585:  Air-Conditioning and Warm Air Heating Equipment and Commercial and Industrial Refrigeration Equipment","3586:  Measuring and Dispensing Pumps","3589:  Service Industry Machinery, Not Elsewhere Classified","3592:  Carburetors, Pistons, Piston Rings, and Valves","3593:  Fluid Power Cylinders and Actuators","3594:  Fluid Power Pumps and Motors","3596:  Scales and Balances, Except Laboratory","3599:  Industrial and Commercial Machinery and Equipment, Not Elsewhere Classified","3612:  Power, Distribution, and Specialty Transformers","3613:  Switchgear and Switchboard Apparatus","3621:  Motors and Generators","3624:  Carbon and Graphite Products","3625:  Relays and Industrial Controls","3629:  Electrical Industrial Apparatus, Not Elsewhere Classified","3631:  Household Cooking Equipment","3632:  Household Refrigerators and HOme and Farm Freezers","3633:  Household Laundry Equipment","3634:  Electric Housewares and Fans","3635:  Household Vacuum Cleaners","3639:  Household Appliances, Not Elsewhere Classified","3641:  Electric Lamp Bulbs and Tubes","3643:  Current-Carrying Wiring Devices","3644:  Noncurrent-Carrying Wiring Devices","3645:  Residential Electric Lighting Fixtures","3646:  Commercial, Industrial, and Institutional Electric Lighting Fixtures","3647:  Vehicular Lighting Equipment","3648:  Lighting Equipment, Not Elsewhere Classified","3651:  Household Audio and Video Equipment","3652:  Phonograph Records and Prerecorded Audio Tapes and Disks","3661:  Telephone and Telegraph Apparatus","3663:  Radio and Television Broadcasting and Communications Equipment","3669:  Communications Equipment, Not Elsewhere Classified","3671:  Electron Tubes","3672:  Printed Circuit Boards","3674:  Semiconductors and Related Devices","3675:  Electronic Capacitors","3676:  Electronic Resistors","3677:  Electronic Coils, Transformers, and Other Inductors","3678:  Electronic Connectors","3679:  Electronic Components, Not Elsewhere Classified","3691:  Storage Batteries","3692:  Primary Batteries, Dry and Wet","3694:  Electrical Equipment for Internal Combustion Engines","3695:  Magnetic And Optical Recording Media","3699:  Electrical Machinery, Equipment, and Supplies, Not Elsewhere","3711:  Motor Vehicles and Passenger Car Bodies","3713:  Truck and Bus Bodies","3714:  Motor Vehicle Parts and Accessories","3715:  Truck Trailers","3716:  Motor Homes","3721:  Aircraft","3724:  Aircraft Engines and Engine Parts","3728:  Aircraft Parts and Auxiliary Equipment, Not Elsewhere Classified","3731:  Ship Building and Repairing","3732:  Boat Building and Repairing","3743:  Railroad Equipment","3751:  Motorcycles, Bicycles, and Parts","3761:  Guided Missiles and Space Vehicles","3764:  Guided Missile and Space Vehicle Propulsion Units and Propulsion Unit Parts","3769:  Guided Missile Space Vehicle Parts and Auxiliary Equipment, Not Elsewhere Classified","3792:  Travel Trailers and Campers","3795:  Tanks and Tank Components","3799:  Transportation Equipment, Not Elsewhere Classified","3812:  Search, Detection, Navigation, Guidance, Aeronautical, and Nautical Systems and Instruments","3821:  Laboratory Apparatus and Furniture","3822:  Automatic Controls for Regulating Residential and Commercial Environments and Appliances","3823:  Industrial Instruments for Measurement, Display, and Control of Process Variables; and Related Products","3824:  Totalizing Fluid Meters and Counting Devices","3825:  Instruments for Measuring and Testing of Electricity and Electrical Signals","3826:  Laboratory Analytical Instruments","3827:  Optical Instruments and Lenses","3829:  Measuring and Controlling Devices, Not Elsewhere Classified","3841:  Surgical and Medical Instruments and Apparatus","3842:  Orthopedic, Prosthetic, and Surgical Appliances and Supplies","3843:  Dental Equipment and Supplies","3844:  X-Ray Apparatus and Tubes and Related Irradiation Apparatus","3845:  Electromedical and Electrotherapeutic Apparatus","3851:  Ophthalmic Goods","3861:  Photographic Equipment and Supplies","3873:  Watches, Clocks, Clockwork Operated Devices, and Parts","3911:  Jewelry, Precious Metal","3914:  Silverware, Plated Ware, and Stainless Steel Ware","3915:  Jewelers' Findings and Materials, and Lapidary Work","3931:  Musical Instruments","3942:  Dolls and Stuffed Toys","3944:  Games, Toys, and Children's Vehicles, Except Dolls and Bicycles","3949:  Sporting and Athletic Goods, Not Elsewhere Classified","3951:  Pens, Mechanical Pencils, and Parts","3952:  Lead Pencils, Crayons, and Artists' Materials","3953:  Marking Devices","3955:  Carbon Paper and Inked Ribbons","3961:  Costume Jewelry and Costume Novelties, Except Precious Metal","3965:  Fasteners, Buttons, Needles, and Pins","3991:  Brooms and Brushes","3993:  Signs and Advertising Specialties","3995:  Burial Caskets","3996:  Linoleum, Asphalted-Felt-Base, and Other Hard Surface Floor Coverings, Not Elsewhere Classified","3999:  Manufacturing Industries, Not Elsewhere Classified","4011:  Railroads, Line-Haul Operating","4013:  Railroad Switching and Terminal Establishments","4111:  Local and Suburban Transit","4119:  Local Passenger Transportation, Not Elsewhere Classified","4121:  Taxicabs","4131:  Intercity and Rural Bus Transportation","4141:  Local Bus Charter Service","4142:  Bus Charter Service, Except Local","4151:  School Buses","4173:  Terminal and Service Facilities for Motor Vehicle Passenger Transportation","4212:  Local Trucking Without Storage","4213:  Trucking, Except Local","4214:  Local Trucking With Storage","4215:  Courier Services, Except by Air","4221:  Farm Product Warehousing and Storage","4222:  Refrigerated Warehousing and Storage","4225:  General Warehousing and Storage","4226:  Special Warehousing and Storage, Not Elsewhere Classified","4231:  Terminal and Joint Terminal Maintenance Facilities for Motor Freight Transportation","4311:  United States Postal Service","4412:  Deep Sea Foreign Transportation of Freight","4424:  Deep Sea Domestic Transportation of Freight","4432:  Freight Transportation on the Great Lakes-St. Lawrence Seaway","4449:  Water Transportation of Freight, Not Elsewhere Classified","4481:  Deep Sea Transportation of Passengers, Except by Ferry","4482:  Ferries","4489:  Water Transportation of Passengers, Not Elsewhere Classified","4491:  Marine Cargo Handling","4492:  Towing and Tugboat Services","4493:  Marinas","4499:  Water Transportation Services, Not Elsewhere Classified","4512:  Air Transportation, Scheduled","4513:  Air Courier Services","4522:  Air Transportation, Nonscheduled","4581:  Airports, Flying Fields, and Airport Terminal Services","4612:  Crude Petroleum Pipelines","4613:  Refined Petroleum Pipelines","4619:  Pipelines, Not Elsewhere Classified","4724:  Travel Agencies","4725:  Tour Operators","4729:  Arrangement of Passenger Transportation, Not Elsewhere Classified","4731:  Arrangement of Transportation of Freight and Cargo","4741:  Rental of Railroad Cars","4783:  Packing and Crating","4785:  Fixed Facilities and Inspection and Weighing Services for Motor Vehicle Transportation","4789:  Transportation Services, Not Elsewhere Classified","4812:  Radiotelephone Communications","4813:  Telephone Communications, Except Radiotelephone","4822:  Telegraph and Other Message Communications","4832:  Radio Broadcasting Stations","4833:  Television Broadcasting Stations","4841:  Cable and Other Pay Television Services","4899:  Communications Services, Not Elsewhere Classified","4911:  Electric Services","4922:  Natural Gas Transmission","4923:  Natural Gas Transmission and Distribution","4924:  Natural Gas Distribution","4925:  Mixed, Manufactured, or Liquefied Petroleum Gas Production and/or","4931:  Electric and Other Services Combined","4932:  Gas and Other Services Combined","4939:  Combination Utilities, Not Elsewhere Classified","4941:  Water Supply","4952:  Sewerage Systems","4953:  Refuse Systems","4959:  Sanitary Services, Not Elsewhere Classified","4961:  Steam and Air-Conditioning Supply","4971:  Irrigation Systems","5012:  Automobiles and Other Motor Vehicles","5013:  Motor Vehicle Supplies and New Parts","5014:  Tires and Tubes","5015:  Motor Vehicle Parts, Used","5021:  Furniture","5023:  Home furnishings","5031:  Lumber, Plywood, Millwork, and Wood Panels","5032:  Brick, Stone, and Related Construction Materials","5033:  Roofing, Siding, and Insulation Materials","5039:  Construction Materials, Not Elsewhere Classified","5043:  Photographic Equipment and Supplies","5044:  Office Equipment","5045:  Computers and Computer Peripheral Equipment and Software","5046:  Commercial Equipment, Not Elsewhere Classified","5047:  Medical, Dental, and Hospital Equipment and Supplies","5048:  Ophthalmic Goods","5049:  Professional Equipment and Supplies, Not Elsewhere Classified","5051:  Metals Service Centers and Offices","5052:  Coal and Other Minerals and Ores","5063:  Electrical Apparatus and Equipment Wiring Supplies, and Construction Materials","5064:  Electrical Appliances, Television and Radio Sets","5065:  Electronic Parts and Equipment, Not Elsewhere Classified","5072:  Hardware","5074:  Plumbing and Heating Equipment and Supplies (Hydronics)","5075:  Warm Air Heating and Air-Conditioning Equipment and Supplies","5078:  Refrigeration Equipment and Supplies","5082:  Construction and Mining (Except Petroleum) Machinery and Equipment","5083:  Farm and Garden Machinery and Equipment","5084:  Industrial Machinery and Equipment","5085:  Industrial Supplies","5087:  Service Establishment Equipment and Supplies","5088:  Transportation Equipment and Supplies, Except Motor Vehicles","5091:  Sporting and Recreational Goods and Supplies","5092:  Toys and Hobby Goods and Supplies","5093:  Scrap and Waste Materials","5094:  Jewelry, Watches, Precious Stones, and Precious Metals","5099:  Durable Goods, Not Elsewhere Classified","5111:  Printing and Writing Paper","5112:  Stationery and Office Supplies","5113:  Industrial and Personal Service Paper","5122:  Drugs, Drug Proprietaries, and Druggists' Sundries","5131:  Piece Goods, Notions, and Other Dry Good","5136:  Men's and Boy's Clothing and Furnishings","5137:  Women's, Children's, and Infants' Clothing and Accessories","5139:  Footwear","5141:  Groceries, General Line","5142:  Packaged Frozen Foods","5143:  Dairy Products, Except Dried or Canned","5144:  Poultry and Poultry Products","5145:  Confectionery","5146:  Fish and Seafoods","5147:  Meats and Meat Products","5148:  Fresh Fruits and Vegetables","5149:  Groceries and Related Products, Not Elsewhere Classified","5153:  Grain and Field Beans","5154:  Livestock","5159:  Farm-Product Raw Materials, Not Elsewhere Classified","5162:  Plastics Materials and Basic Forms and Shapes","5169:  Chemicals and Allied Products, Not Elsewhere Classified","5171:  Petroleum Bulk stations and Terminals","5172:  Petroleum and Petroleum Products Wholesalers, Except Bulk Stations and Terminals","5181:  Beer and Ale","5182:  Wine and Distilled Alcoholic Beverages","5191:  Farm Supplies","5192:  Books, Periodicals, and Newspapers","5193:  Flowers, Nursery Stock, and Florists' Supplies","5194:  Tobacco and Tobacco Products","5198:  Paints, Varnishes, and Supplies","5199:  Nondurable Goods, Not Elsewhere Classified","5211:  Lumber and Other Building Materials Dealers","5231:  Paint, Glass, and Wallpaper Stores","5251:  Hardware Stores","5261:  Retail Nurseries, Lawn and Garden Supply Stores","5271:  Mobile Home Dealers","5311:  Department Stores","5331:  Variety Stores","5399:  Miscellaneous General Merchandise Stores","5411:  Grocery Stores","5421:  Meat and Fish (Seafood) Markets, Including Freezer Provisioners","5431:  Fruit and Vegetable Markets","5441:  Candy, Nut, and Confectionery Stores","5451:  Dairy Products Stores","5461:  Retail Bakeries","5499:  Miscellaneous Food Stores","5511:  Motor Vehicle Dealers (New and Used)","5521:  Motor Vehicle Dealers (Used Only)","5531:  Auto and Home Supply Stores","5541:  Gasoline Service Stations","5551:  Boat Dealers","5561:  Recreational Vehicle Dealers","5571:  Motorcycle Dealers","5599:  Automotive Dealers, Not Elsewhere Classified","5611:  Men's and Boys' Clothing and Accessory Stores","5621:  Women's Clothing Stores","5632:  Women's Accessory and Specialty Stores","5641:  Children's and Infants' Wear Stores","5651:  Family Clothing Stores","5661:  Shoe Stores","5699:  Miscellaneous Apparel and Accessory Stores","5712:  Furniture Stores","5713:  Floor Covering Stores","5714:  Drapery, Curtain, and Upholstery Stores","5719:  Miscellaneous home furnishings Stores","5722:  Household Appliance Stores","5731:  Radio, Television, and Consumer Electronics Stores","5734:  Computer and Computer Software Stores","5735:  Record and Prerecorded Tape Stores","5736:  Musical Instrument Stores","5812:  Eating Places","5813:  Drinking Places (alcoholic Beverages)","5912:  Drug Stores and Proprietary Stores","5921:  Liquor Stores","5932:  Used Merchandise Stores","5941:  Sporting Goods Stores and Bicycle Shops","5942:  Book Stores","5943:  Stationery Stores","5944:  Jewelry Stores","5945:  Hobby, Toy, and Game Shops","5946:  Camera and Photographic Supply Stores","5947:  Gift, Novelty, and Souvenir Shops","5948:  Luggage and Leather Goods Stores","5949:  Sewing, Needlework, and Piece Goods Stores","5961:  Catalog and Mail-Order Houses","5962:  Automatic Merchandising Machine Operators","5963:  Direct Selling Establishments","5983:  Fuel Oil Dealers","5984:  Liquefied Petroleum Gas (Bottled Gas) Dealers","5989:  Fuel Dealers, Not Elsewhere Classified","5992:  Florists","5993:  Tobacco Stores and Stands","5994:  News Dealers and Newsstands","5995:  Optical Goods Stores","5999:  Miscellaneous Retail Stores, Not Elsewhere Classified","6011:  Federal Reserve Banks","6019:  Central Reserve Depository Institutions, Not Elsewhere Classified","6021:  National Commercial Banks","6022:  State Commercial Banks","6029:  Commercial Banks, Not Elsewhere Classified","6035:  Savings Institutions, Federally Chartered","6036:  Savings Institutions, Not Federally Chartered","6061:  Credit Unions, Federally Chartered","6062:  Credit Unions, Not Federally Chartered","6081:  Branches and Agencies of Foreign Banks","6082:  Foreign Trade and International Banking Institutions","6091:  Non-deposit Trust Facilities,","6099:  Functions Related to Depository Banking, Not Elsewhere Classified","6111:  Federal and Federally-Sponsored Credit Agencies","6141:  Personal Credit Institutions","6153:  Short-Term Business Credit Institutions, Except Agricultural","6159:  Miscellaneous business Credit Institutions","6162:  Mortgage Bankers and Loan Correspondents","6163:  Loan Brokers","6211:  Security Brokers, Dealers, and Flotation Companies","6221:  Commodity Contracts Brokers and Dealers","6231:  Security and Commodity Exchanges","6282:  Investment Advice","6289:  Services Allied With the Exchange of Securities or Commodities, Not Elsewhere Classified","6311:  Life Insurance","6321:  Accident and Health Insurance","6324:  Hospital and Medical Service Plans","6331:  Fire, Marine, and Casualty Insurance","6351:  Surety Insurance","6361:  Title Insurance","6371:  Pension, Health, and Welfare Funds","6399:  Insurance Carriers, Not Elsewhere Classified","6411:  Insurance Agents, Brokers, and Service","6512:  Operators of Nonresidential Buildings","6513:  Operators of Apartment Buildings","6514:  Operators of Dwellings Other Than Apartment Buildings","6515:  Operators of Residential Mobile Home Sites","6517:  Lessors of Railroad Property","6519:  Lessors of Real Property, Not Elsewhere Classified","6531:  Real Estate Agents and Managers","6541:  Title Abstract Offices","6552:  Land Subdividers and Developers, Except Cemeteries","6553:  Cemetery Subdividers and Developers","6712:  Offices of Bank Holding Companies","6719:  Offices of Holding Companies, Not Elsewhere Classified","6722:  Management Investment Offices, Open-End","6726:  Unit Investment Trusts, Face-Amount Certificate Offices, and Closed-End Management Investment Offices","6732:  Educational, Religious, and Charitable Trusts","6733:  Trusts, Except Educational, Religious, and Charitable","6792:  Oil Royalty Traders","6794:  Patent Owners and Lessors","6798:  Real Estate Investment Trusts","6799:  Investors, Not Elsewhere Classified","7011:  Hotels and Motels","7021:  Rooming and Boarding Houses","7032:  Sporting and Recreational Camps","7033:  Recreational Vehicle Parks and Campsites","7041:  Organization Hotels and Lodging Houses, on Membership Basis","7211:  Power Laundries, Family and Commercial","7212:  Garment Pressing, and Agents for Laundries and Drycleaners","7213:  Linen Supply","7215:  Coin-Operated Laundries and Drycleaning","7216:  Drycleaning Plants, Except Rug Cleaning","7217:  Carpet and Upholstery Cleaning","7218:  Industrial Launderers","7219:  Laundry and Garment Services, Not Elsewhere Classified","7221:  Photographic Studios, Portrait","7231:  Beauty Shops","7241:  Barber Shops","7251:  Shoe Repair Shops and Shoeshine Parlors","7261:  Funeral Service and Crematories","7291:  Tax Return Preparation Services","7299:  Miscellaneous Personal Services, Not Elsewhere Classified","7311:  Advertising Agencies","7312:  Outdoor Advertising Services","7313:  Radio, Television, and Publishers' Advertising Representatives","7319:  Advertising, Not Elsewhere Classified","7322:  Adjustment and Collection Services","7323:  Credit Reporting Services","7331:  Direct Mail Advertising Services","7334:  Photocopying and Duplicating Services","7335:  Commercial Photography","7336:  Commercial Art and Graphic Design","7338:  Secretarial and Court Reporting Services","7342:  Disinfecting and Pest Control Services","7349:  Building Cleaning and Maintenance Services, Not Elsewhere","7352:  Medical Equipment Rental and Leasing","7353:  Heavy Construction Equipment Rental and Leasing","7359:  Equipment Rental and Leasing, Not Elsewhere Classified","7361:  Employment Agencies","7363:  Help Supply Services","7371:  Computer Programming Services","7372:  Prepackaged Software","7373:  Computer Integrated Systems Design","7374:  Computer Processing and Data Preparation and Processing Services","7375:  Information Retrieval Services","7376:  Computer Facilities Management Services","7377:  Computer Rental and Leasing","7378:  Computer Maintenance and Repair","7379:  Computer Related Services, Not Elsewhere Classified","7381:  Detective, Guard, and Armored Car Services","7382:  Security Systems Services","7383:  News Syndicates","7384:  Photofinishing Laboratories","7389:  Business Services, Not Elsewhere Classified","7513:  Truck Rental and Leasing, Without Drivers","7514:  Passenger Car Rental","7515:  Passenger Car Leasing","7519:  Utility Trailer and Recreational Vehicle Rental","7521:  Automobile Parking","7532:  Top, Body, and Upholstery Repair Shops and Paint Shops","7533:  Automotive Exhaust System Repair Shops","7534:  Tire Retreading and Repair Shops","7536:  Automotive Glass Replacement Shops","7537:  Automotive Transmission Repair Shops","7538:  General Automotive Repair Shops","7539:  Automotive Repair Shops, Not Elsewhere Classified","7542:  Carwashes","7549:  Automotive Services, Except Repair and Carwashes","7622:  Radio and Television Repair Shops","7623:  Refrigeration and Air-Conditioning Service and Repair Shops","7629:  Electrical and Electronic Repair Shops, Not Elsewhere Classified","7631:  Watch, Clock, and Jewelry Repair","7641:  Reupholstery and Furniture Repair","7692:  Welding Repair","7694:  Armature Rewinding Shops","7699:  Repair Shops and Related Services, Not Elsewhere Classified","7812:  Motion Picture and Video Tape Production","7819:  Services Allied to Motion Picture Production","7822:  Motion Picture and Video Tape Distribution","7829:  Services Allied to Motion Picture Distribution","7832:  Motion Picture Theaters, Except Drive-In","7833:  Drive-In Motion Picture Theaters","7841:  Video Tape Rental","7911:  Dance Studios, Schools, and Halls","7922:  Theatrical Producers (Except Motion Picture) and Miscellaneous Theatrical Services","7929:  Bands, Orchestras, Actors, and Other Entertainers and Entertainment Groups","7933:  Bowling Centers","7941:  Professional Sports Clubs and Promoters","7948:  Racing, Including Track Operation","7991:  Physical Fitness Facilities","7992:  Public Golf Courses","7993:  Coin-Operated Amusement Devices","7996:  Amusement Parks","7997:  Membership Sports and Recreation Clubs","7999:  Amusement and Recreation Services, Not Elsewhere Classified","8011:  Offices and Clinics of Doctors of Medicine","8021:  Offices and Clinics of Dentists","8031:  Offices and Clinics of Doctors of Osteopathy","8041:  Offices and Clinics of Chiropractors","8042:  Offices and Clinics of Optometrists","8043:  Offices and Clinics of Podiatrists","8049:  Offices and Clinics of Health Practitioners, Not Elsewhere Classified","8051:  Skilled Nursing Care Facilities","8052:  Intermediate Care Facilities","8059:  Nursing and Personal Care Facilities, Not Elsewhere Classified","8062:  General Medical and Surgical Hospitals","8063:  Psychiatric Hospitals","8069:  Specialty Hospitals, Except Psychiatric","8071:  Medical Laboratories","8072:  Dental Laboratories","8082:  Home Health Care Services","8092:  Kidney Dialysis Centers","8093:  Specialty Outpatient Facilities, Not Elsewhere Classified","8099:  Health and Allied Services, Not Elsewhere Classified","8111:  Legal Services","8211:  Elementary and Secondary Schools","8221:  Colleges, Universities, and Professional Schools","8222:  Junior Colleges and Technical Institutes","8231:  Libraries","8243:  Data Processing Schools","8244:  Business and Secretarial Schools","8249:  Vocational Schools, Not Elsewhere Classified","8299:  Schools and Educational Services, Not Elsewhere Classified","8322:  Individual and Family Social Services","8331:  Job Training and Vocational Rehabilitation Services","8351:  Child Day Care Services","8361:  Residential Care","8399:  Social Services, Not Elsewhere Classified","8412:  Museums and Art Galleries","8422:  Arboreta and Botanical or Zoological Gardens","8611:  Business Associations","8621:  Professional Membership Organizations","8631:  Labor Unions and Similar Labor Organizations","8641:  Civic, Social, and Fraternal Associations","8651:  Political Organizations","8661:  Religious Organizations","8699:  Membership Organizations, Not Elsewhere Classified","8711:  Engineering Services","8712:  Architectural Services","8713:  Surveying Services","8721:  Accounting, Auditing, and Bookkeeping Services","8731:  Commercial Physical and Biological Research","8732:  Commercial Economic, Sociological, and Educational Research","8733:  Noncommercial Research Organizations","8734:  Testing Laboratories","8741:  Management Services","8742:  Management Consulting Services","8743:  Public Relations Services","8744:  Facilities Support Management Services","8748:  Business Consulting Services, Not Elsewhere Classified","8811:  Private Households","8999:  Services, Not Elsewhere Classified","9111:  Executive Offices","9121:  Legislative Bodies","9131:  Executive and Legislative Offices Combined","9199:  General Government, Not Elsewhere Classified","9211:  Courts","9221:  Police Protection","9222:  Legal Counsel and Prosecution","9223:  Correctional Institutions","9224:  Fire Protection","9229:  Public Order and Safety, Not Elsewhere Classified","9311:  Public Finance, Taxation, and Monetary Policy","9411:  Administration of Educational Programs","9431:  Administration of Public Health Programs","9441:  Administration of Social, Human Resource and Income Maintenance Programs","9451:  Administration of Veterans' Affairs, Except Health and Insurance","9511:  Air and Water Resource and Solid Waste Management","9512:  Land, Mineral, Wildlife, and Forest Conservation","9531:  Administration of Housing Programs","9532:  Administration of Urban Planning and Community and Rural Development","9611:  Administration of General Economic Programs","9621:  Regulation and Administration of Transportation Programs","9631:  Regulation and Administration of Communications, Electric, Gas, and Other Utilities","9641:  Regulation of Agricultural Marketing and Commodities","9651:  Regulation, Licensing, and Inspection of Miscellaneous Commercial Sectors","9661:  Space and Research and Technology","9711:  National Security","9721:  International Affairs","9999:  Nonclassifiable Establishments");
+	// 0. Validate User
+	function ValidateUser() {
+		var errormsg = document.getElementById("user_error");
+		var userid = document.getElementById("userid").value;
+		var password = document.getElementById("password").value;
+		var userid_patt = /^[A-Za-z0-9\.\' \-]{4,10}$/;
+		var password_patt = /^[A-Za-z0-9\.\' \-]{7,20}$/;		
+		if (userid.length==0) {
+			errormsg.innerHTML = "Please Enter User ID";
+			return;
+		}
+		else if (userid_patt.test(userid)==false) {
+			errormsg.innerHTML = "Please Enter A Valid User ID: 4 to 10 Characters";
+			return;
+		}
+		else if (password.length==0) {
+			errormsg.innerHTML = "Please Enter Password";
+			return;
+		}
+		else if (password_patt.test(password)==false) {
+			errormsg.innerHTML = "Please Enter A Valid Password: 7 to 20 Characters";
+			return;
+		}
+		else {
+			errormsg.innerHTML = "";
+			return;
+		}
+		return;
+	}
+	// I. Validate Company Information	
+	function ValidateCompany() {
+		// error message to display
+		var company_errormsg = "";
+		// html object to change
+		var errormsg = document.getElementById("company_error");
+		var name = document.getElementById("name").value;
+		var cik = document.getElementById("cik").value;		
+		var fyr = document.getElementById("fyr").value;		
+		var irs = document.getElementById("irs").value;
+		//var sic_msg = document.getElementById("sic_code").innerHTML;
+		var sic = document.getElementById("sic_enter").value;
+		var name_patt = /^[A-Za-z0-9\.\' \-]{3,30}$/;
+		var cik_patt = /^[0-9]{7}$/;
+		var fyr_patt = /^((01|03|05|07|08|10|12)-([012][0-9]|3[01]))|((04|06|09|11)-([012][0-9]|30))|(02-([012][0-9]))$/;
+		var dat_patt = /^([0-9]{2})-([0-9]{2})$/;
+		var irs_patt = /^[0-9]{9}$/;
+		var sic_patt = /^[0-9]{4}$/;
+		// 1. name
+		name = name.toUpperCase();
+		document.getElementById("name").value = name;
+		if (name.length==0) {
+			company_errormsg = "Please Enter Company Name";
+			errormsg.innerHTML = company_errormsg;
+			return;
+		}		
+		else if (name_patt.test(name)==false) {
+			company_errormsg = "Please Enter A Valid Company Name";
+			errormsg.innerHTML = company_errormsg;
+			return;
+		}			
+		// 2. cik
+		if (cik.length==0) {
+			company_errormsg = "Please Enter Central Index Number";
+			errormsg.innerHTML = company_errormsg;
+			return;
+		}		
+		else if (cik_patt.test(cik)==false) {
+			company_errormsg = "Please Enter 7-Digit Central Index Number";
+			errormsg.innerHTML = company_errormsg;
+			return;
+		}			
+		// 3. fyr 
+		if (fyr.length==0) {
+			company_errormsg = "Please Enter Fiscal Year End";
+			errormsg.innerHTML = company_errormsg;
+			return;
+		}
+		else if (dat_patt.test(fyr)==false) {
+			company_errormsg = "Please Enter Fiscal Year End In This Form: MM-DD";
+			errormsg.innerHTML = company_errormsg;
+			return;
+		}
+		else if (fyr_patt.test(fyr)==false) {
+			company_errormsg = "Please Enter A Valid Date";
+			errormsg.innerHTML = company_errormsg;
+			return;
+		}
+		// 4. irs
+		if (irs.length==0) {
+			company_errormsg = "Please Enter IRS Number";
+			errormsg.innerHTML = company_errormsg;
+			return;
+		}
+		else if (irs_patt.test(irs)==false) {
+			company_errormsg = "Please Enter 9-Digit IRS Number";
+			errormsg.innerHTML = company_errormsg;
+			return;
+		}
+		// 5. sic
+		if (sic=="") {
+			company_errormsg = "Please Select Or Enter SIC Code";
+			errormsg.innerHTML = company_errormsg;
+			return;
+		}
+		else if (sic_patt.test(sic)==false) {
+			company_errormsg = "Please Select Industry Or Enter A Valid SIC Code";
+			errormsg.innerHTML = company_errormsg;
+			return;
+		}
+		else {
+			company_errormsg = "";
+			errormsg.innerHTML = company_errormsg;
+			return;
+		}
+		return;
+	}
+	// II. Validate Business Address
+	function ValidateAddress1() {
+		// error message to display
+		var address_errormsg = "";
+		var errormsg = document.getElementById("address1_error");
+		var street = document.getElementById("street").value;		
+		var state = document.getElementById("state").value;		
+		var zip = document.getElementById("zip").value;
+		var city = document.getElementById("city").value;
+		var phone = document.getElementById("phone").value;
+		var email = document.getElementById("email").value;
+		var street_patt = /^[A-Za-z0-9\#\.\' \-]{5,50}$/;
+		var state_patt = /^A[LKSZRAEP]|C[AOT]|D[EC]|F[LM]|G[AU]|HI|I[ADLN]|K[SY]|LA|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[ARW]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY]$/;
+		var city_patt = /^[A-Za-z\.\' \-]{2,15}\s?[A-Za-z\.\' \-]{2,15}\s?[A-Za-z\.\' \-]{2,15}/;
+		var zip_patt = /^\d{5}(-\d{4})?$/;
+		var phone_patt = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
+		var email_patt = /^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
+		// 1. Street
+		if (street.length==0) {
+			address_errormsg = "Please Enter Street";
+			errormsg.innerHTML = address_errormsg;
+			return;
+		}
+		else if (street_patt.test(street)==false) {
+			address_errormsg = "Please Enter A Valid Street";
+			errormsg.innerHTML = address_errormsg;
+			return;
+		}	
+		// 2. City
+		if (city.length==0) {
+			address_errormsg = "Please Enter City";
+			errormsg.innerHTML = address_errormsg;
+			return;
+		}
+		else if (city_patt.test(city)==false) {
+			address_errormsg = "Please Enter A Valid City";
+			errormsg.innerHTML = address_errormsg;
+			return;
+		}
+		// 3. State
+		state = state.toUpperCase();
+		document.getElementById("state").value = state;
+		if (state.length==0) {
+			address_errormsg = "Please Enter State";
+			errormsg.innerHTML = address_errormsg;
+			return;
+		}
+		else if (state.length!=2) {
+			address_errormsg = "Please Enter A Valid State";
+			errormsg.innerHTML = address_errormsg;
+			return;
+		}	
+		else if (state_patt.test(state)==false) {
+			address_errormsg = "Please Enter A Valid State";
+			errormsg.innerHTML = address_errormsg;
+			return;
+		}		
+		// 4. Zip Code
+		if (zip.length==0) {
+			address_errormsg = "Please Enter Zip Code";
+			errormsg.innerHTML = address_errormsg;
+			return;
+		}
+		else if (zip_patt.test(zip)==false) {
+			address_errormsg = "Please Enter A Valid Zip Code: xxxxx or xxxxx-xxxx";
+			errormsg.innerHTML = address_errormsg;
+			return;
+		}
+		// 5. Email
+		if (email.length==0) {
+		address_errormsg = "Please Enter Email Address";
+			errormsg.innerHTML = address_errormsg;
+			return;
+		}
+		else if (email_patt.test(email)==false) {
+			address_errormsg = "Please Enter A Valid Email Address";
+			errormsg.innerHTML = address_errormsg;
+			return;
+		}
+		// 6. Phone
+		if (phone.length==0) {
+		address_errormsg = "Please Enter Phone Number";
+			errormsg.innerHTML = address_errormsg;
+			return;
+		}
+		else if (phone_patt.test(phone)==false) {
+			address_errormsg = "Please Enter A Valid Phone Number: xxx-xxx-xxxx";
+			errormsg.innerHTML = address_errormsg;
+			return;
+		}		
+		else {
+			address_errormsg = "";
+			errormsg.innerHTML = address_errormsg;
+			return;
+		}
+		return;
+	}
+	// III. Generate SIC Code
+	function Enable_SIC_Select(button) {
+		if (button.checked==true) {
+			// enable selection
+			document.edit_customer.sic1.disabled=false;
+			document.edit_customer.sic2.disabled=false;
+			document.edit_customer.sic3.disabled=false;
+			document.edit_customer.sic4.disabled=false;
+			// disable input text
+			document.getElementById("sic_enter").disabled=true;
+			// reset SIC message
+			var sic_msg = document.getElementById("sic_code");
+			sic_msg.innerHTML = "";
+		}
+	}
+	function Enable_SIC_Enter(button) {
+		if (button.checked==true) {
+			// enable input text
+			document.getElementById("sic_enter").disabled=false;
+			// disable selection
+			document.edit_customer.sic1.disabled=true;
+			document.edit_customer.sic2.disabled=true;
+			document.edit_customer.sic3.disabled=true;
+			document.edit_customer.sic4.disabled=true;
+			// reset SIC message
+			var sic_msg = document.getElementById("sic_code");
+			sic_msg.innerHTML = "";
+		}
+	}
+	// (1) Industry 1 
+	function updateind1() {
+		var ind1_list = document.edit_customer.sic1;
+		ind1_list.options.length=0;
+		ind1_list.options[ind1_list.options.length] = new Option('Select First-Digit Industry','x');
+		for (i=0; i<ind1.length; i++) {
+			ind1_list.options[ind1_list.options.length]= new Option(ind1[i].split(":")[1], ind1[i].split(":")[0]);
+		}
+		return;
+	}
+	window.onload = updateind1;
+	// (2) Industry 2	
+	function updateind2(ind1_selected) {
+		var ind2_list = document.edit_customer.sic2;
+		ind2_list.options.length=0;
+		ind2_list.options[ind2_list.options.length] = new Option('Select Second-Digit Industry','x');
+		for (i=0; i<ind2[ind1_selected].length; i++) {
+			ind2_list.options[ind2_list.options.length]= new Option(ind2[ind1_selected][i].split(":")[1], ind2[ind1_selected][i].split(":")[0]);
+		}
+		return;
+	}
+	// (3) Industry 3
+	function updateind3(ind2_selected) {
+		var ind2_list = document.edit_customer.sic2;
+		var ind3_list = document.edit_customer.sic3;
+		var option2 = ind2_list.options[ind2_selected];
+		ind3_list.options.length=0;
+		ind3_list.options[ind3_list.options.length] = new Option('Select Third-Digit Industry','x');
+		for (i=0; i<ind3_all.length; i++) {
+			var value3 = ind3_all[i].split(":")[0];
+			if (value3.substring(0,2)==option2.value) {
+				ind3_list.options[ind3_list.options.length] = new Option(ind3_all[i].split(":")[1], ind3_all[i].split(":")[0]);
+			}
+		}
+		return;
+	}
+	// (4) Industry 4
+	function updateind4(ind3_selected) {
+		var ind3_list = document.edit_customer.sic3;
+		var ind4_list = document.edit_customer.sic4;
+		var option3 = ind3_list.options[ind3_selected];
+		ind4_list.options.length=0;
+		ind4_list.options[ind4_list.options.length] = new Option('Select Fourth-Digit Industry','x');
+		//window.alert(option3.value);
+		for (i=0; i<ind4_all.length; i++) {
+			var value4 = ind4_all[i].split(":")[0];
+			if (value4.substring(0,3)==option3.value) {
+				ind4_list.options[ind4_list.options.length] = new Option(ind4_all[i].split(":")[1], ind4_all[i].split(":")[0]);
+			}
+		}
+		return;
+	}
+	// (5) Show SIC code
+	function updatesic1(ind4_selected) {
+		var sic_patt = /^[0-9]{4}$/;
+		var sic = document.getElementById("sic_enter").value;	
+		if (document.getElementById("sic_enter").disabled==true) {
+			var ind4_list = document.edit_customer.sic4;
+			var option4 = ind4_list.options[ind4_selected];
+			var sic_msg = document.getElementById("sic_code");
+			var sic_enter = document.getElementById("sic_enter");
+			sic_enter.disabled = false;
+			sic_enter.value = option4.value;
+			//sic_msg.innerHTML = "Your SIC Code Is: <input type='text' id ='sic_code_show' name='sic_code_show' value='"+option4.value+"'/>";
+			ValidateCompany();
+			return;		
+		}
+	}
+	function updatesic2() {
+		var sic_patt = /^[0-9]{4}$/;
+		var sic = document.getElementById("sic_enter").value;
+		var errormsg = document.getElementById("company_error");
+		if (document.getElementById("sic_enter").disabled==false) {
+			var sic_msg = document.getElementById("sic_code");
+			var sic = document.getElementById("sic_enter").value;
+			if (sic_patt.test(sic)==true) {
+				//sic_msg.innerHTML = "Your SIC Code Is: <input type='text' id ='sic_code_show' name='sic_code_show' value='"+option4.value+"'/>";
+				ValidateCompany();
+				return;
+			}
+			else {
+				errormsg.innerHTML="Please Enter A Valid SIC Code";
+			}
+		}
+	}
+	// IV. Generate Mailing Address (onClick of "same mailing address?") and Validate Mailing Address
+	function GenerateMailingAddress() {
+		// Generate a form but with information filled in
+		var street2 = document.getElementById("street").value;		
+		var state2 = document.getElementById("state").value;		
+		var zip2 = document.getElementById("zip").value;
+		var city2 = document.getElementById("city").value;
+		var phone2 = document.getElementById("phone").value;
+		var email2 = document.getElementById("email").value;
+		document.getElementById("street2").value = street2;
+		document.getElementById("state2").value = state2;
+		document.getElementById("zip2").value = zip2;
+		document.getElementById("city2").value = city2;
+		document.getElementById("phone2").value = phone2;
+		document.getElementById("email2").value = email2;
+	}
+	// V. Validate Mailing Address
+	function ValidateAddress2() {
+		// error message to display
+		var address2_errormsg = "";
+		var errormsg = document.getElementById("address2_error");
+		var street2 = document.getElementById("street2").value;		
+		var state2 = document.getElementById("state2").value;		
+		var zip2 = document.getElementById("zip2").value;
+		var city2 = document.getElementById("city2").value;
+		var phone2 = document.getElementById("phone2").value;
+		var email2 = document.getElementById("email2").value;
+		var street_patt = /^[A-Za-z0-9\#\.\' \-]{5,50}$/;
+		var state_patt = /^A[LKSZRAEP]|C[AOT]|D[EC]|F[LM]|G[AU]|HI|I[ADLN]|K[SY]|LA|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[ARW]|RI|S[CD]|T[NX]|UT|V[AIT]|W[AIVY]$/;
+		var city_patt = /^[A-Za-z\.\' \-]{2,15}\s?[A-Za-z\.\' \-]{2,15}\s?[A-Za-z\.\' \-]{2,15}/;
+		var zip_patt = /^\d{5}(-\d{4})?$/;
+		var phone_patt = /^[0-9]{3}-[0-9]{3}-[0-9]{4}$/;
+		var email_patt = /^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$/;
+		// 1. Street
+		if (street2.length==0) {
+			address2_errormsg = "Please Enter Street";
+			errormsg.innerHTML = address2_errormsg;
+			return;
+		}
+		else if (street_patt.test(street2)==false) {
+			address2_errormsg = "Please Enter A Valid Street";
+			errormsg.innerHTML = address2_errormsg;
+			return;
+		}	
+		// 2. City
+		if (city2.length==0) {
+			address2_errormsg = "Please Enter City";
+			errormsg.innerHTML = address2_errormsg;
+			return;
+		}
+		else if (city_patt.test(city2)==false) {
+			address2_errormsg = "Please Enter A Valid City";
+			errormsg.innerHTML = address2_errormsg;
+			return;
+		}
+		// 3. State
+		state2 = state2.toUpperCase();
+		document.getElementById("state2").value = state2;
+		if (state2.length==0) {
+			address2_errormsg = "Please Enter State";
+			errormsg.innerHTML = address2_errormsg;
+			return;
+		}
+		else if (state2.length!=2) {
+			address2_errormsg = "Please Enter A Valid State";
+			errormsg.innerHTML = address2_errormsg;
+			return;
+		}	
+		else if (state_patt.test(state2)==false) {
+			address2_errormsg = "Please Enter A Valid State";
+			errormsg.innerHTML = address2_errormsg;
+			return;
+		}		
+		// 4. Zip Code
+		if (zip2.length==0) {
+			address2_errormsg = "Please Enter Zip Code";
+			errormsg.innerHTML = address2_errormsg;
+			return;
+		}
+		else if (zip_patt.test(zip2)==false) {
+			address2_errormsg = "Please Enter A Valid Zip Code: xxxxx or xxxxx-xxxx";
+			errormsg.innerHTML = address2_errormsg;
+			return;
+		}
+		// 5. Email
+		if (email2.length==0) {
+		address2_errormsg = "Please Enter Email Address";
+			errormsg.innerHTML = address2_errormsg;
+			return;
+		}
+		else if (email_patt.test(email2)==false) {
+			address2_errormsg = "Please Enter A Valid Email Address";
+			errormsg.innerHTML = address2_errormsg;
+			return;
+		}
+		// 6. Phone
+		if (phone2.length==0) {
+		address_errormsg = "Please Enter Phone Number";
+			errormsg.innerHTML = address2_errormsg;
+			return;
+		}
+		else if (phone_patt.test(phone2)==false) {
+			address2_errormsg = "Please Enter A Valid Phone Number: xxx-xxx-xxxx";
+			errormsg.innerHTML = address2_errormsg;
+			return;
+		}		
+		else {
+			address2_errormsg = "";
+			errormsg.innerHTML = address2_errormsg;
+			return;
+		}
+		return;
+	}
+	// VI. Validate all 
+	function ValidateAll() { 
+		ValidateUser();
+		ValidateCompany();
+		ValidateAddress1();
+		ValidateAddress2();
+		var msg = document.getElementById("submit_msg");	
+		if (document.getElementById("user_error").innerHTML!="") {
+			msg.innerHTML = "Please Complete User Information";
+			return false;
+		}
+		if (document.getElementById("company_error").innerHTML!="") {
+			msg.innerHTML = "Please Complete Company Information";
+			return;
+		}
+		else if (document.getElementById("address1_error").innerHTML!="") {
+			msg.innerHTML = "Please Complete Business Address Information";
+			return false;
+		}
+		else if (document.getElementById("address2_error").innerHTML!="") {
+			msg.innerHTML = "Please Complete Mailing Address Information";
+			return false;
+		}	
+		else {
+			msg.innerHTML = ""
+			return false;
+		}
+		return true;
+	}
+	</script>
+</head>
+<body>
+	<h1>Easy Filing SEC Forms</h1>
+	<h2>View And Edit Your Profile</h2>
+	<form name="log_out" method="POST" action="logout_customer.php">
+		<p><input type="submit" value="Log Out" class="log_out"></input></p>
+	</form>
+	<form method="POST" action="edit_customer.php" name="edit_customer">
+	<!-- choose an id -->
+	<fieldset>
+	<legend><strong>User ID and Password</strong></legend>
+		<p id="user_error" style="color:red"></p>
+		<table>
+			<tr>
+			<td>User ID: </td>
+			<td><input type="text" name="userid" id="userid" disabled value="<?php echo $row['UserID']?>" onBlur="ValidateUser()"/></td>
+			</tr>
+			<tr>
+			<td>Password: </td>
+			<td><input type="password" name="password" id="password" value="<?php echo $row['Passwrd']?>" onBlur="ValidateUser()"/></td>
+			</tr>
+		</table>	
+	<!-- <p><input type="button" onclick="Exists_ID()" value="Check If User ID Exists"/></p> -->
+	</fieldset>
+	<p id="exist_msg" style="color:red"></p>
+	<p></p>
+	<!-- company info -->
+	<fieldset>
+	<legend><strong>Company Information</strong></legend>
+		<p id="company_error" style="color:red"></p>
+		<table>
+			<tr>
+			<td>Company Conformed Name: </td>
+			<td><input type="text" name="name" id="name" value="<?php echo $row['Name']?>" onBlur="ValidateCompany()"/></td>
+			<td>&nbsp;</td>
+			<td>Central Index Key: </td>
+			<td><input type="text" name="cik" id="cik" value="<?php echo $row['CIK']?>" onBlur="ValidateCompany()"/></td>
+			</tr>
+			<tr>
+			<td>Fiscal Year End: </td>
+			<td><input type="text" name="fyr" id="fyr" value="<?php echo $row['FYR']?>" onBlur="ValidateCompany()"/></td>
+			<td>&nbsp;</td>
+			<td>IRS Number: </td>
+			<td><input type="text" name="irs" id="irs" value="<?php echo $row['IRS']?>" onBlur="ValidateCompany()"/></td>
+			</tr>
+		</table>
+		<p>Standard Industrial Classification Code: </p>
+		<table>
+			<tr>
+			<td><input type="radio" name="sic_code" id="sic_notknow" onClick="Enable_SIC_Select(this)"/>Select Industry If You Do Not Know Your Code: </td>
+			<td>
+				<select name="sic1" size="1" onBlur="ValidateCompany()" onChange="updateind2(this.selectedIndex)" disabled="true">
+				<option selected="">Select First-Digit Industry</option>
+				</select>
+				<select name="sic2" size="1" onBlur="ValidateCompany()" onChange="updateind3(this.selectedIndex)" disabled="true">
+				<option selected="">Select Second-Digit Industry</option>
+				</select>
+				<select name="sic3" size="1" onBlur="ValidateCompany()" onChange="updateind4(this.selectedIndex)" disabled="true">
+				<option selected="">Select Third-Digit Industry</option>
+				</select>
+				<select name="sic4" size="1" onBlur="ValidateCompany()" onChange="updatesic1(this.selectedIndex)" disabled="true">
+				<option selected="">Select Fourth-Digit Industry</option>
+				</select>
+			</td>
+			</tr>
+			<tr>
+			<td><input type="radio" name="sic_code" id="sic_know" onClick="Enable_SIC_Enter(this)"/>Enter Your Four-Digit SIC Code If You Know It: </td>
+			<td>
+				<input id="sic_enter" name="sic_enter" type="text" value="<?php echo $row['SIC']?>" onBlur="updatesic2()"/>
+			</td>
+			</tr>
+		</table>	
+	<p id="sic_code" style="color:blue"></p>
+	</fieldset>
+	<p></p>
+	<!-- business address -->
+	<fieldset>
+	<legend><strong>Business Address</strong></legend>
+		<p id="address1_error" style="color:red"></p>
+		<table>
+			<tr>
+			<td>Street: </td>
+			<td><input type="text" name="street" id="street" value="<?php echo $row['Street']?>" onBlur="ValidateAddress1()"/></td>
+			<td>&nbsp;</td>
+			<td>City: </td>
+			<td><input type="text" name="city" id="city" value="<?php echo $row['City']?>" onBlur="ValidateAddress1()"/></td>
+			</tr>
+			<tr>
+			<td>State: </td>
+			<td><input type="text" name="state" id="state" value="<?php echo $row['State']?>" onBlur="ValidateAddress1()"/></td>
+			<td>&nbsp;</td>
+			<td>Zip Code: </td>
+			<td><input type="text" name="zip" id="zip" value="<?php echo $row['Zip']?>" onBlur="ValidateAddress1()"/></td>
+			</tr>
+			<tr>		
+			<td>Email: </td>
+			<td><input type="text" name="email" id="email" value="<?php echo $row['Email']?>" onBlur="ValidateAddress1()"/></td>
+			<td>&nbsp;</td>
+			<td>Phone: </td>
+			<td><input type="text" name="phone" id="phone" value="<?php echo $row['Phone']?>" onBlur="ValidateAddress1()"/></td>
+			</tr>
+		</table>
+	</fieldset>
+	<p></p>
+	<!-- mailing address -->
+	<fieldset>
+	<legend><strong>Mailing Address</strong></legend>	
+	<p id="address2_error" style="color:red"></p>
+		<p>Is the Mail Address Same as Business Address?
+			<input type="radio" name="mail" value="Y" onClick="GenerateMailingAddress()"/>Yes 
+			<input type="radio" name="mail" value="N" onClick="GenerateMailingForm()"/>No 
+		<p id="address2_error" style="color:red"></p>
+		<table>
+			<tr>
+			<td>Street: </td>
+			<td><input type="text" name="street2" id="street2" value="<?php echo $row['Street2']?>" onBlur="ValidateAddress2()"/></td>
+			<td>&nbsp;</td>
+			<td>City: </td>
+			<td><input type="text" name="city2" id="city2" value="<?php echo $row['City2']?>" onBlur="ValidateAddress2()"/></td>
+			</tr>
+			<tr>
+			<td>State: </td>
+			<td><input type="text" name="state2" id="state2" value="<?php echo $row['State2']?>" onBlur="ValidateAddress2()"/></td>
+			<td>&nbsp;</td>
+			<td>Zip Code: </td>
+			<td><input type="text" name="zip2" id="zip2" value="<?php echo $row['Zip2']?>" onBlur="ValidateAddress2()"/></td>
+			</tr>
+			<tr>		
+			<td>Email: </td>
+			<td><input type="text" name="email2" id="email2" value="<?php echo $row['Email2']?>" onBlur="ValidateAddress2()"/></td>
+			<td>&nbsp;</td>
+			<td>Phone: </td>
+			<td><input type="text" name="phone2" id="phone2" value="<?php echo $row['Phone2']?>" onBlur="ValidateAddress2()"/></td>
+			</tr>
+		</table>
+	</fieldset>
+	<p></p>
+	<!-- submit button -->
+	<p id="submit_msg" style="color:red"></p>
+	<p>Save Changes? 
+		<input type="radio" name="check" id="checked_Y" value="Y" onClick="document.getElementById('submit_request').disabled=false"/>Yes
+		<input type="radio" name="check" id="checked_N" value="N" onClick="document.getElementById('submit_request').disabled=true"/>No		
+	</p>
+	<p>
+		<input id="submit_request" type="submit" value="Save" disabled="disabled" onSubmit="return ValidateAll()"/>
+	</p>
+	<p id="submit_status" style="color:blue"></p>
+	</form>
+</body>
+</html>

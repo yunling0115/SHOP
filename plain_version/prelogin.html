@@ -1,0 +1,47 @@
+<html>
+<title>Pre-Login</title>
+<head>
+<!-- css -->
+	<link href="sec.css" rel="stylesheet" type="text/css" />
+<!-- javascript: validation -->
+	<script type="text/javascript">
+		// login_form validation (client side):
+		function validate() {
+			var userid = document.getElementById("userid").value;
+			var passwrd = document.getElementById("password").value;
+			var errormsg = document.getElementById("pre_errormsg");
+			if (userid=="") {
+				errormsg.innerHTML = "Please Enter UserID";
+			}
+			else if (passwrd=="") {
+				errormsg.innerHTML = "Please Enter Password";
+			}
+			else {
+				errormsg.innerHTML = "";
+			}
+			return;
+		}
+	</script>
+</head>
+<body>
+<!-- html part: login form -->
+	<h1>Easy Filing SEC Forms</h1>	
+	<form method="POST" action="login.php" name="login_form" id="login_form">	
+		<fieldset>
+		<legend><strong>Administrative Login</strong></legend>
+		<table align="center">
+			<tr>
+			<td width="50%" style="color:blue"><strong><em>User ID:</em></strong></td> 
+			<td><input type="text" name="userid" onBlur="validate()" id="userid"/></td>
+			</tr>
+			<tr>
+			<td width="50%" style="color:blue"><strong><em>Password:</em></strong></td>
+			<td><input type="password" name="password" onBlur="validate()" id="password"/></td>
+			</tr>
+		</table>
+		</fieldset>		
+		<p align="center"><input type="submit" value="Login" class="log_in"/></p>	
+		<p style="color:red" id="pre_errormsg"></p>
+	</form>
+</body>
+</html>

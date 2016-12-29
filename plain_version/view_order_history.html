@@ -1,0 +1,124 @@
+<?php
+	$con = mysql_connect('localhost','root','0418162');
+	if (!$con) {
+		die("Cannot establish a connection");
+	}
+	$db_selected = mysql_select_db("hw4",$con);
+	if (isset($_SESSION['uid'])) {
+		$sql = 'select * from Orders where UserID="'.$_SESSION['uid'].'"';
+	}
+	$result = mysql_query($sql);
+?>
+<html>
+<head>
+<!-- css -->
+	<link href="sec.css" rel="stylesheet" type="text/css" />
+<!-- javascript -->
+	<script type="text/javascript">
+	function ShowItems(button, i) {
+		var name = button.name;
+		var table = document.getElementById('order_summary');
+		var show = document.getElementById(name);
+		// show detailed info
+		if (button.value=="Details >") {
+			button.value="< Hide Details";
+			show.hidden=false;
+		}
+		// hide info
+		else {
+			button.value="Details >";
+			show.hidden=true;
+		}
+	}
+	</script>
+</head>
+<body>
+<h1>Easy Filing SEC Forms</h1>
+	<h2>View Order History</h2>
+	<form name="log_out" method="POST" action="logout_customer.php">
+		<p><input type="submit" value="Log Out" class="log_out"></input></p>
+	</form>
+	<form>
+	<!-- Order information + Shipping Information(w detailed information) -->
+	<fieldset>
+	<legend><strong>Order Summary</strong></legend>
+	<table id='order_summary'>
+	<?php
+		$i = 1;
+		if ($row=mysql_fetch_assoc($result)) {
+			$sql2 = 'select * from Items where OrderID='.$row['OrderID'];
+			$res2 = mysql_query($sql2);
+			echo '<tr>
+					<td width="130"><strong>OrderID</strong</td>
+					<td width="130"><strong>Date</strong</td>
+					<td width="420"><strong>Shipping Address</strong></td>	
+					<td width="130"><strong>View Items</strong></td>						
+				</tr>';
+			$i++;
+			echo '<tr></tr>';
+			$i++;
+			echo '<tr>';
+			echo '<td valign="top">'.$row['OrderID'].'</td>';
+			echo '<td valign="top">'.$row['Date'].'</td>';
+			// forming shipping address
+			$shippingaddress = $row['Street'].', '.$row['City'].', '.$row['State'].', '.$row['Zip'];
+			echo '<td valign="top">'.$shippingaddress.'</td>';
+			// button				
+			echo '<td valign="top"><input type="button" value="Details >" name="'.$row['OrderID'].'" onclick="ShowItems(this,'.$i.')"/></td>';
+			echo '</tr>';
+			echo '<tr id="'.$row['OrderID'].'" hidden>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td><fieldset><table>
+			<legend><strong>Order Details</strong></legend><tr><td><br/></td></tr>
+			<tr><td width="130"><strong>Form Name</strong></td> <td width="130"><strong>Quantity</strong></td> <td width="130"><strong>Price</strong></td> </tr>';
+			while ($row2=mysql_fetch_assoc($res2)) {
+				echo '<tr><td>'.$row2['Name'].'</td> <td>'.$row2['Quantity'].'</td> <td>'.$row2['Price'].'</td> </tr>';
+			}
+			echo '<tr><td><br/></td></tr><tr><td><strong>Total Price</strong></td></tr><tr><td>'.$row['TotalPrice'].'</td></tr>';
+			echo '<tr><td><br/></td></tr></table></fieldset></td>
+			</tr>';
+			$i++;
+		}
+		else {
+			echo '<tr><td><p style="color:red"><strong>Nothing in Your Order History</strong></p></td></tr>';
+		}
+		while ($row=mysql_fetch_assoc($result)) {
+			$sql2 = 'select * from Items where OrderID='.$row['OrderID'];
+			$res2 = mysql_query($sql2);
+			echo '<tr>';
+			echo '<td valign="top">'.$row['OrderID'].'</td>';
+			echo '<td valign="top">'.$row['Date'].'</td>';
+			// forming shipping address
+			$shippingaddress = $row['Street'].', '.$row['City'].', '.$row['State'].', '.$row['Zip'];
+			echo '<td valign="top">'.$shippingaddress.'</td>';
+			// checkbox				
+			echo '<td valign="top"><input type="button" value="Details >" name="'.$row['OrderID'].'" onclick="ShowItems(this,'.$i.')"/></td>';
+			echo '</tr>';
+			echo '<tr id="'.$row['OrderID'].'" hidden>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td><fieldset><table>
+			<legend><strong>Order Details</strong></legend><tr><td><br/></td></tr>
+			<tr><td width="130"><strong>Form Name</strong></td> <td width="130"><strong>Quantity</strong></td> <td width="130"><strong>Price</strong></td> </tr>';
+			while ($row2=mysql_fetch_assoc($res2)) {
+				echo '<tr><td>'.$row2['Name'].'</td> <td>'.$row2['Quantity'].'</td> <td>'.$row2['Price'].'</td> </tr>';
+			}
+			echo '<tr><td><br/></td></tr><tr><td><strong>Total Price</strong></td></tr><tr><td>'.$row['TotalPrice'].'</td></tr>';
+			echo '<tr><td><br/></td></tr></table></fieldset></td>
+			</tr>';
+			$i++;
+		}
+	?>
+	</table>
+	</fieldset>
+	</form>
+	<!-- link? -->
+	<!-- Go back to select more form -->
+	<p><input type="button" value="<< Back To Shopping" onClick="window.location.href = 'add_cart.php'";/></p>
+	<!-- Go to edit profile -->
+	<p><input type="button" value="Edit User Profile >>" onClick="window.location.href = 'edit_customer.php'";/></p>
+</body>
+</html>

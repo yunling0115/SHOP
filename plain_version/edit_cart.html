@@ -1,0 +1,88 @@
+<?php
+	$con = mysql_connect('localhost','root','0418162');
+	if (!$con) {
+		die("Cannot establish a connection");
+	}
+	$db_selected = mysql_select_db("hw4",$con);
+	if (isset($_SESSION['uid'])) {
+		$sql = 'select Name, UserID, SessionID, Price, sum(Quantity) as Quantity from Cart where UserID="'.$_SESSION['uid'].'" group by Name';
+	}
+	else if (isset($_SESSION['sid'])) {
+		$sql = 'select Name, UserID, SessionID, Price, sum(Quantity) as Quantity from Cart where SessionID="'.$_SESSION['sid'].'" group by Name';
+	}
+	else {
+		header ('location: add_cart.php');
+	}
+	$result = mysql_query($sql);
+?>
+<html>
+<head>
+<!-- css -->
+	<link href="sec.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<h1>Easy Filing SEC Forms</h1>
+	<h2>Edit Your Cart</h2>
+	<form name="log_out" method="POST" action="logout_customer.php">
+		<p><input type="submit" value="Log Out" class="log_out"></input></p>
+	</form>
+	<form method="POST" action="edit_cart.php">
+	<!-- Cart information -->
+	<fieldset>
+	<legend><strong>Make Changes To Your Cart</strong></legend>
+	<table>
+	<?php
+		if ($row=mysql_fetch_assoc($result)) {
+			echo '<tr>
+					<td width="130"><strong>Name</strong</td>
+					<td width="130"><strong>Quantity</strong></td>
+					<td width="130"><strong>Price</strong></td>	
+					<td width="130"><strong>Delete</strong></td>					
+				</tr>';
+			echo '<tr>';
+			echo '<td>'.$row['Name'].'</td>';
+			echo '<td><input style="width:50" type="text" value="'.$row['Quantity'].'" name="Q_'.$row['Name'].'"/></td>';
+			echo '<td>'.$row['Price'].'</td>';				
+			echo '<td><input type="checkbox" value="'.$row['Name'].'" name="D_'.$row['Name'].'"/></td>';
+			echo '</tr>';
+		}
+		else {
+			echo '<tr><td><p style="color:red"><strong>Nothing in Your Cart!</strong></p></td></tr>';
+		}
+		while ($row=mysql_fetch_assoc($result)) {
+			echo '<tr>';
+			echo '<td>'.$row['Name'].'</td>';
+			echo '<td><input style="width:50" type="text" value="'.$row['Quantity'].'" name="Q_'.$row['Name'].'"/></td>';
+			echo '<td>'.$row['Price'].'</td>';	
+			echo '<td><input type="checkbox" value="'.$row['Name'].'" name="D_'.$row['Name'].'"/></td>';
+			echo '</tr>';
+		}
+	?>	
+	</table>
+	</fieldset>
+	<p></p>
+	<!-- Save button -->
+	<p>Save Changes? 
+		<input type="radio" name="check" id="checked_Y" value="Y" onClick="document.getElementById('submit_request').disabled=false"/>Yes
+		<input type="radio" name="check" id="checked_N" value="N" onClick="document.getElementById('submit_request').disabled=true"/>No		
+	</p>
+	<p><input id="submit_request" type="submit" value="Save" disabled="disabled"/></p>
+	<p id="Message" name="Message"></p>
+	<!-- Go back to select more form -->
+	<p><input id="edit_cart" type="button" value="<< Back To Select More Forms" onClick="window.location.href = 'add_cart.php'";/></p>
+	<!-- Go further to pay -->
+	<?php
+	if (isset($_SESSION['uid'])) {
+	?>
+		<p><input id="edit_cart" type="button" value="Continue to Checkout >>" onClick="window.location.href = 'checkout_page.php'";/></p>
+	<?php
+	}
+	else {
+	?>
+		<p><input id="edit_cart" type="button" value="Login/Register and Checkout >>" onClick="window.location.href = 'login_customer.php'";/></p>
+	<?php
+	}
+	?>
+	</form>
+</body>
+</html>
